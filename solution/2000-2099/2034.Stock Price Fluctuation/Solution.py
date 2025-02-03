@@ -1,36 +1,24 @@
 class StockPrice:
-
     def __init__(self):
-        self.last_ts = 0
-        self.mp = {}
-        self.mi = []
-        self.mx = []
-        self.counter = collections.Counter()
+        self.d = {}
+        self.ls = SortedList()
+        self.last = 0
 
     def update(self, timestamp: int, price: int) -> None:
-        if timestamp in self.mp:
-            old_price = self.mp[timestamp]
-            self.counter[old_price] -= 1
-            
-        self.mp[timestamp] = price
-        self.last_ts = max(self.last_ts, timestamp)
-        self.counter[price] += 1
-        heapq.heappush(self.mi, price)
-        heapq.heappush(self.mx, -price)
-        
+        if timestamp in self.d:
+            self.ls.remove(self.d[timestamp])
+        self.d[timestamp] = price
+        self.ls.add(price)
+        self.last = max(self.last, timestamp)
 
     def current(self) -> int:
-        return self.mp[self.last_ts]
+        return self.d[self.last]
 
     def maximum(self) -> int:
-        while self.counter[-self.mx[0]] == 0:
-            heapq.heappop(self.mx)
-        return -self.mx[0]
+        return self.ls[-1]
 
     def minimum(self) -> int:
-        while self.counter[self.mi[0]] == 0:
-            heapq.heappop(self.mi)
-        return self.mi[0]
+        return self.ls[0]
 
 
 # Your StockPrice object will be instantiated and called as such:

@@ -1,36 +1,24 @@
 class Solution {
 public:
-	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-		int nums[10000] = { 0 };
-		int index = 0;
-		vector<int>::iterator it1 = nums1.begin();
-		vector<int>::iterator it2 = nums2.begin();
-		for (; it1 != nums1.end() && it2 != nums2.end();) {
-			if (*it1 >= *it2) {
-				nums[index++] = *it2;
-				it2++;
-			}
-			else {
-				nums[index++] = *it1;
-				it1++;
-			}
-		}
-		
-		while (it1 != nums1.end()) {
-			nums[index++] = *it1;
-			it1++;
-		}
-		while (it2 != nums2.end()) {
-			nums[index++] = *it2;
-			it2++;
-		}
-
-		if (index % 2 == 0) {
-			return (double)((nums[index/2] + nums[index/2 - 1])/2.0);
-		}
-		else {
-			return (double)(nums[index/2]);
-		}
-
-	}
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int m = nums1.size(), n = nums2.size();
+        function<int(int, int, int)> f = [&](int i, int j, int k) {
+            if (i >= m) {
+                return nums2[j + k - 1];
+            }
+            if (j >= n) {
+                return nums1[i + k - 1];
+            }
+            if (k == 1) {
+                return min(nums1[i], nums2[j]);
+            }
+            int p = k / 2;
+            int x = i + p - 1 < m ? nums1[i + p - 1] : 1 << 30;
+            int y = j + p - 1 < n ? nums2[j + p - 1] : 1 << 30;
+            return x < y ? f(i + p, j, k - p) : f(i, j + p, k - p);
+        };
+        int a = f(0, 0, (m + n + 1) / 2);
+        int b = f(0, 0, (m + n + 2) / 2);
+        return (a + b) / 2.0;
+    }
 };

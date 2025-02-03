@@ -1,23 +1,19 @@
 # Definition for a binary tree node.
 # class TreeNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.left = None
-#         self.right = None
-
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
 class Solution:
-    indexes = {}
-    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
-        def build(preorder, inorder, p1, p2, i1, i2) -> TreeNode:
-            if p1 > p2 or i1 > i2:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        def dfs(i: int, j: int, n: int) -> Optional[TreeNode]:
+            if n <= 0:
                 return None
-            root_val = preorder[p1]
-            pos = self.indexes[root_val]
-            root = TreeNode(root_val)
-            root.left = None if pos == i1 else build(preorder, inorder, p1 + 1, p1 - i1 + pos, i1, pos - 1)
-            root.right = None if pos == i2 else build(preorder, inorder, p1 - i1 + pos + 1, p2, pos + 1, i2)
-            return root
-        n = len(inorder)
-        for i in range(n):
-            self.indexes[inorder[i]] = i
-        return build(preorder, inorder, 0, n - 1, 0, n - 1)
+            v = preorder[i]
+            k = d[v]
+            l = dfs(i + 1, j, k - j)
+            r = dfs(i + 1 + k - j, k + 1, n - k + j - 1)
+            return TreeNode(v, l, r)
+
+        d = {v: i for i, v in enumerate(inorder)}
+        return dfs(0, 0, len(preorder))

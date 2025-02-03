@@ -1,11 +1,11 @@
 function subarraySum(nums: number[], k: number): number {
-    let ans = 0, pre = 0;
-    let hashTable = new Map();
-    hashTable.set(0, 1);
-    for (let num of nums) {
-        pre += num;
-        ans += (hashTable.get(pre - k) || 0);
-        hashTable.set(pre, (hashTable.get(pre) || 0) + 1);
+    const cnt: Map<number, number> = new Map();
+    cnt.set(0, 1);
+    let [ans, s] = [0, 0];
+    for (const x of nums) {
+        s += x;
+        ans += cnt.get(s - k) || 0;
+        cnt.set(s, (cnt.get(s) || 0) + 1);
     }
     return ans;
-};
+}

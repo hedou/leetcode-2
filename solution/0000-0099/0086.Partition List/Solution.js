@@ -11,24 +11,18 @@
  * @return {ListNode}
  */
 var partition = function (head, x) {
-
-    if (!head || !head.next) {
-        return head;
-    }
-    const dummy1 = new ListNode(-1), dummy2 = new ListNode(-1);
-    let cur1 = dummy1, cur2 = dummy2;
-    let cur = head;
-    while (cur) {
-        if (cur.val < x) {
-            cur1.next = cur;
-            cur1 = cur1.next;
+    const [l, r] = [new ListNode(), new ListNode()];
+    let [tl, tr] = [l, r];
+    for (; head; head = head.next) {
+        if (head.val < x) {
+            tl.next = head;
+            tl = tl.next;
         } else {
-            cur2.next = cur;
-            cur2 = cur2.next;
+            tr.next = head;
+            tr = tr.next;
         }
-        cur = cur.next;
     }
-    cur2.next = null;
-    cur1.next = dummy2.next;
-    return (dummy1.next);
+    tr.next = null;
+    tl.next = r.next;
+    return l.next;
 };

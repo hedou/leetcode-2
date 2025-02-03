@@ -14,21 +14,20 @@
  * }
  */
 class Solution {
-    private int res;
+    private int ans;
 
     public int diameterOfBinaryTree(TreeNode root) {
-        res = 0;
         dfs(root);
-        return res;
+        return ans;
     }
 
     private int dfs(TreeNode root) {
         if (root == null) {
             return 0;
         }
-        int left = dfs(root.left);
-        int right = dfs(root.right);
-        res = Math.max(res, left + right);
-        return 1 + Math.max(left, right);
+        int l = dfs(root.left);
+        int r = dfs(root.right);
+        ans = Math.max(ans, l + r);
+        return 1 + Math.max(l, r);
     }
 }

@@ -1,148 +1,131 @@
-# [面试题 57. 和为 s 的两个数字](https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof/%E9%9D%A2%E8%AF%95%E9%A2%9857.%20%E5%92%8C%E4%B8%BAs%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97/README.md
+---
+
+<!-- problem:start -->
+
+# [面试题 57. 和为 s 的两个数字](https://leetcode.cn/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
 
 ## 题目描述
 
-输入一个递增排序的数组和一个数字 s，在数组中查找两个数，使得它们的和正好是 s。如果有多对数字的和等于 s，则输出任意一对即可。
+<!-- description:start -->
 
-**示例 1：**
+<p>输入一个递增排序的数组和一个数字s，在数组中查找两个数，使得它们的和正好是s。如果有多对数字的和等于s，则输出任意一对即可。</p>
 
-```
-输入：nums = [2,7,11,15], target = 9
-输出：[2,7] 或者 [7,2]
-```
+<p>&nbsp;</p>
 
-**示例 2：**
+<p><strong>示例 1：</strong></p>
 
-```
-输入：nums = [10,26,30,31,47,60], target = 40
-输出：[10,30] 或者 [30,10]
-```
+<pre><strong>输入：</strong>nums = [2,7,11,15], target = 9
+<strong>输出：</strong>[2,7] 或者 [7,2]
+</pre>
 
-**限制：**
+<p><strong>示例 2：</strong></p>
 
-- `1 <= nums.length <= 10^5`
-- `1 <= nums[i] <= 10^6`
+<pre><strong>输入：</strong>nums = [10,26,30,31,47,60], target = 40
+<strong>输出：</strong>[10,30] 或者 [30,10]
+</pre>
+
+<p>&nbsp;</p>
+
+<p><strong>限制：</strong></p>
+
+<ul>
+	<li><code>1 &lt;= nums.length &lt;= 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= nums[i]&nbsp;&lt;= 10<sup>6</sup></code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-哈希表或双指针实现。时间复杂度均为 `O(n)`。
+我们用双指针 $l$ 和 $r$ 分别指向数组的左右两端，然后不断移动指针，直到找到一组和为 $target$ 的连续正整数序列。
 
-哈希表空间复杂度 `O(n)`，双指针则是 `O(1)`。
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。其中 $n$ 为数组的长度。
+
+<!-- solution:start -->
+
+### 方法一：双指针
 
 <!-- tabs:start -->
 
-### **Python3**
-
-哈希表：
+#### Python3
 
 ```python
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        s = set()
-        for num in nums:
-            if target - num in s:
-                return [num, target - num]
-            s.add(num)
-```
-
-双指针：
-
-```python
-class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        p, q = 0, len(nums) - 1
-        while p < q:
-            s = nums[p] + nums[q]
-            if s == target:
-                return [nums[p], nums[q]]
-            if s < target:
-                p += 1
+        l, r = 0, len(nums) - 1
+        while l < r:
+            if nums[l] + nums[r] == target:
+                return [nums[l], nums[r]]
+            if nums[l] + nums[r] > target:
+                r -= 1
             else:
-                q -= 1
+                l += 1
 ```
 
-### **Java**
-
-哈希表：
+#### Java
 
 ```java
 class Solution {
     public int[] twoSum(int[] nums, int target) {
-        Set<Integer> s = new HashSet<>();
-        for (int num : nums) {
-            if (s.contains(target - num)) {
-                return new int[]{num, target - num};
+        int l = 0, r = nums.length - 1;
+        while (true) {
+            if (nums[l] + nums[r] == target) {
+                return new int[] {nums[l], nums[r]};
             }
-            s.add(num);
-        }
-        return null;
-    }
-}
-```
-
-双指针：
-
-```java
-class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        for (int p = 0, q = nums.length - 1; p < q;) {
-            int s = nums[p] + nums[q];
-            if (s == target) {
-                return new int[]{nums[p], nums[q]};
-            }
-            if (s < target) {
-                ++p;
+            if (nums[l] + nums[r] > target) {
+                --r;
             } else {
-                --q;
+                ++l;
             }
         }
-        return null;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        for (int p = 0, q = nums.size() - 1; p < q;) {
-            int s = nums[p] + nums[q];
-            if (s == target) {
-                return vector<int>{nums[p], nums[q]};
+        int l = 0, r = nums.size() - 1;
+        while (1) {
+            if (nums[l] + nums[r] == target) {
+                return {nums[l], nums[r]};
             }
-            if (s < target) {
-                ++p;
+            if (nums[l] + nums[r] > target) {
+                --r;
             } else {
-                --q;
+                ++l;
             }
         }
-        return vector<int>{};
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 func twoSum(nums []int, target int) []int {
-	for p, q := 0, len(nums)-1; p < q; {
-		s := nums[p] + nums[q]
-		if s == target {
-			return []int{nums[p], nums[q]}
+	l, r := 0, len(nums)-1
+	for {
+		if nums[l]+nums[r] == target {
+			return []int{nums[l], nums[r]}
 		}
-		if s < target {
-			p++
+		if nums[l]+nums[r] > target {
+			r--
 		} else {
-			q--
+			l++
 		}
 	}
-	return nil
 }
 ```
 
-### **JavaScript**
+#### JavaScript
 
 ```js
 /**
@@ -150,25 +133,111 @@ func twoSum(nums []int, target int) []int {
  * @param {number} target
  * @return {number[]}
  */
-var twoSum = function(nums, target) {
-    for (let p = 0, q = nums.length; p < q;) {
-        const s = nums[p] + nums[q];
-        if (s == target) {
-            return [nums[p], nums[q]];
+var twoSum = function (nums, target) {
+    let l = 0;
+    let r = nums.length - 1;
+    while (1) {
+        if (nums[l] + nums[r] == target) {
+            return [nums[l], nums[r]];
         }
-        if (s < target) {
-            ++p;
+        if (nums[l] + nums[r] > target) {
+            --r;
         } else {
-            --q;
+            ++l;
         }
     }
 };
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+function twoSum(nums: number[], target: number): number[] {
+    let l = 0;
+    let r = nums.length - 1;
+    while (nums[l] + nums[r] !== target) {
+        if (nums[l] + nums[r] < target) {
+            l++;
+        } else {
+            r--;
+        }
+    }
+    return [nums[l], nums[r]];
+}
 ```
 
+#### Rust
+
+```rust
+use std::cmp::Ordering;
+
+impl Solution {
+    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+        let mut l = 0;
+        let mut r = nums.len() - 1;
+        loop {
+            match target.cmp(&(nums[l] + nums[r])) {
+                Ordering::Less => {
+                    r -= 1;
+                }
+                Ordering::Greater => {
+                    l += 1;
+                }
+                Ordering::Equal => {
+                    break vec![nums[l], nums[r]];
+                }
+            }
+        }
+    }
+}
+```
+
+#### C#
+
+```cs
+public class Solution {
+    public int[] TwoSum(int[] nums, int target) {
+        int l = 0, r = nums.Length - 1;
+        while (true) {
+            if (nums[l] + nums[r] == target) {
+                return new int[] {nums[l], nums[r]};
+            }
+            if (nums[l] + nums[r] > target) {
+                --r;
+            } else {
+                ++l;
+            }
+        }
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        var l = 0
+        var r = nums.count - 1
+
+        while l < r {
+            let sum = nums[l] + nums[r]
+            if sum == target {
+                return [nums[l], nums[r]]
+            } else if sum > target {
+                r -= 1
+            } else {
+                l += 1
+            }
+        }
+
+        return []
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

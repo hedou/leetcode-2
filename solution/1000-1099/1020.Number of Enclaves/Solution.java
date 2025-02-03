@@ -1,43 +1,40 @@
 class Solution {
-    private int[] p;
-    private int[][] dirs = new int[][]{{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+    private int[][] grid;
 
     public int numEnclaves(int[][] grid) {
+        this.grid = grid;
         int m = grid.length, n = grid[0].length;
-        p = new int[m * n + 1];
-        for (int i = 0; i < p.length; ++i) {
-            p[i] = i;
-        }
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
+        for (int j = 0; j < n; j++) {
+            for (int i : List.of(0, m - 1)) {
                 if (grid[i][j] == 1) {
-                    if (i == 0 || i == m - 1 || j == 0 || j == n - 1) {
-                        p[find(i * n + j)] = find(m * n);
-                    } else {
-                        for (int[] e : dirs) {
-                            if (grid[i + e[0]][j + e[1]] == 1) {
-                                p[find(i * n + j)] = find((i + e[0]) * n + j + e[1]);
-                            }
-                        }
-                    }
+                    dfs(i, j);
                 }
             }
         }
-        int res = 0;
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                if (grid[i][j] == 1 && find(i * n + j) != find(m * n)) {
-                    ++res;
+        for (int i = 0; i < m; i++) {
+            for (int j : List.of(0, n - 1)) {
+                if (grid[i][j] == 1) {
+                    dfs(i, j);
                 }
             }
         }
-        return res;
+        int ans = 0;
+        for (var row : grid) {
+            for (int x : row) {
+                ans += x;
+            }
+        }
+        return ans;
     }
 
-    private int find(int x) {
-        if (p[x] != x) {
-            p[x] = find(p[x]);
+    private void dfs(int i, int j) {
+        grid[i][j] = 0;
+        final int[] dirs = {-1, 0, 1, 0, -1};
+        for (int k = 0; k < 4; k++) {
+            int x = i + dirs[k], y = j + dirs[k + 1];
+            if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length && grid[x][y] == 1) {
+                dfs(x, y);
+            }
         }
-        return p[x];
     }
 }

@@ -15,21 +15,6 @@ public:
         if (!root) {
             return 0;
         }
-        int leftDepth = depth(root->left);
-        int rightDepth = depth(root->right);
-        if (leftDepth > rightDepth) {
-            return (1 << rightDepth) + countNodes(root->left);
-        }
-        return (1 << leftDepth) + countNodes(root->right);
-    }
-
-private:
-    int depth(TreeNode* root) {
-        int res = 0;
-        while (root) {
-            ++res;
-            root = root->left;
-        }
-        return res;
+        return 1 + countNodes(root->left) + countNodes(root->right);
     }
 };

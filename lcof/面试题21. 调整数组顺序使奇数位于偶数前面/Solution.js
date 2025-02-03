@@ -3,18 +3,13 @@
  * @return {number[]}
  */
 var exchange = function (nums) {
-  let left = 0;
-  let right = nums.length - 1;
-  while (left < right) {
-    let c = nums[left];
-    nums[left] = nums[right];
-    nums[right] = c;
-    while (nums[left] % 2) {
-      left++;
+    let j = 0;
+    for (let i = 0; i < nums.length; ++i) {
+        if (nums[i] & 1) {
+            const t = nums[i];
+            nums[i] = nums[j];
+            nums[j++] = t;
+        }
     }
-    while (nums[right] % 2 === 0) {
-      right--;
-    }
-  }
-  return nums;
+    return nums;
 };

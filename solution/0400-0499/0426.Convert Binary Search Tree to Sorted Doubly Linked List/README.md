@@ -1,78 +1,75 @@
-# [426. 将二叉搜索树转化为排序的双向链表](https://leetcode-cn.com/problems/convert-binary-search-tree-to-sorted-doubly-linked-list)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/README.md
+tags:
+    - 栈
+    - 树
+    - 深度优先搜索
+    - 二叉搜索树
+    - 链表
+    - 二叉树
+    - 双向链表
+---
+
+<!-- problem:start -->
+
+# [426. 将二叉搜索树转化为排序的双向链表 🔒](https://leetcode.cn/problems/convert-binary-search-tree-to-sorted-doubly-linked-list)
 
 [English Version](/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>将一个 <strong>二叉搜索树</strong> 就地转化为一个 <strong>已排序的双向循环链表</strong> 。</p>
 
 <p>对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。</p>
 
-<p>特别地，我们希望可以 <strong>就地</strong> 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。</p>
+<p>特别地，我们希望可以 <strong>原地</strong> 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。</p>
 
-<p> </p>
+<p>&nbsp;</p>
 
-<p><strong>示例 1：</strong></p>
+<p><strong class="example">示例 1：</strong></p>
 
 <pre>
 <strong>输入：</strong>root = [4,2,5,1,3] 
 
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/images/bstdllreturndll.png" style="width: 400px;" />
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/images/bstdllreturndll.png" style="width: 400px;" />
 <strong>输出：</strong>[1,2,3,4,5]
 
 <strong>解释：</strong>下图显示了转化后的二叉搜索树，实线表示后继关系，虚线表示前驱关系。
-<img src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/images/bstdllreturnbst.png" style="width: 400px;" />
+<img src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0400-0499/0426.Convert%20Binary%20Search%20Tree%20to%20Sorted%20Doubly%20Linked%20List/images/bstdllreturnbst.png" style="width: 400px;" />
 </pre>
 
-<p><strong>示例 2：</strong></p>
+<p><strong class="example">示例 2：</strong></p>
 
 <pre>
 <strong>输入：</strong>root = [2,1,3]
 <strong>输出：</strong>[1,2,3]
 </pre>
 
-<p><strong>示例 3：</strong></p>
-
-<pre>
-<strong>输入：</strong>root = []
-<strong>输出：</strong>[]
-<strong>解释：</strong>输入是空树，所以输出也是空链表。
-</pre>
-
-<p><strong>示例 4：</strong></p>
-
-<pre>
-<strong>输入：</strong>root = [1]
-<strong>输出：</strong>[1]
-</pre>
-
-<p> </p>
+<p>&nbsp;</p>
 
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>-1000 <= Node.val <= 1000</code></li>
-	<li><code>Node.left.val < Node.val < Node.right.val</code></li>
-	<li><code>Node.val</code> 的所有值都是独一无二的</li>
-	<li><code>0 <= Number of Nodes <= 2000</code></li>
+	<li>树中节点的数量在范围&nbsp;<code>[0, 2000]</code>&nbsp;中</li>
+	<li><code>-1000 &lt;= Node.val &lt;= 1000</code></li>
+	<li>树中的所有值都是 <strong>独一无二</strong> 的</li>
 </ul>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-- 排序链表：二叉搜索树中序遍历得到有序序列
-- 循环链表：头节点指向链表尾节点，尾节点指向链表头节点
-- 双向链表：`pre.right = cur`、`cur.left = pre`、`pre = cur`
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 """
@@ -83,31 +80,33 @@ class Node:
         self.left = left
         self.right = right
 """
+
+
 class Solution:
-    def treeToDoublyList(self, root: 'Node') -> 'Node':
-        def dfs(cur):
-            if cur is None:
+    def treeToDoublyList(self, root: 'Optional[Node]') -> 'Optional[Node]':
+        def dfs(root):
+            if root is None:
                 return
-            dfs(cur.left)
-            if self.pre is None:
-                self.head = cur
+            nonlocal prev, head
+            dfs(root.left)
+            if prev:
+                prev.right = root
+                root.left = prev
             else:
-                self.pre.right = cur
-            cur.left = self.pre
-            self.pre = cur
-            dfs(cur.right)
+                head = root
+            prev = root
+            dfs(root.right)
+
         if root is None:
             return None
-        self.head = self.pre = None
+        head = prev = None
         dfs(root)
-        self.head.left = self.pre
-        self.pre.right = self.head
-        return self.head
+        prev.right = head
+        head.left = prev
+        return head
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /*
@@ -132,67 +131,176 @@ class Node {
 */
 
 class Solution {
+    private Node prev;
     private Node head;
-    private Node pre;
 
     public Node treeToDoublyList(Node root) {
-        if (root == null) return null;
+        if (root == null) {
+            return null;
+        }
+        prev = null;
+        head = null;
         dfs(root);
-        head.left = pre;
-        pre.right = head;
+        prev.right = head;
+        head.left = prev;
         return head;
     }
 
-    private void dfs(Node cur) {
-        if (cur == null) return;
-        dfs(cur.left);
-        if (pre == null) head = cur;
-        else pre.right = cur;
-        cur.left = pre;
-        pre = cur;
-        dfs(cur.right);
+    private void dfs(Node root) {
+        if (root == null) {
+            return;
+        }
+        dfs(root.left);
+        if (prev != null) {
+            prev.right = root;
+            root.left = prev;
+        } else {
+            head = root;
+        }
+        prev = root;
+        dfs(root.right);
     }
 }
 ```
 
-### **JavaScript**
+#### C++
+
+```cpp
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* prev;
+    Node* head;
+
+    Node* treeToDoublyList(Node* root) {
+        if (!root) return nullptr;
+        prev = nullptr;
+        head = nullptr;
+        dfs(root);
+        prev->right = head;
+        head->left = prev;
+        return head;
+    }
+
+    void dfs(Node* root) {
+        if (!root) return;
+        dfs(root->left);
+        if (prev) {
+            prev->right = root;
+            root->left = prev;
+        } else
+            head = root;
+        prev = root;
+        dfs(root->right);
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a Node.
+ * type Node struct {
+ *     Val int
+ *     Left *Node
+ *     Right *Node
+ * }
+ */
+
+func treeToDoublyList(root *Node) *Node {
+	if root == nil {
+		return root
+	}
+	var prev, head *Node
+
+	var dfs func(root *Node)
+	dfs = func(root *Node) {
+		if root == nil {
+			return
+		}
+		dfs(root.Left)
+		if prev != nil {
+			prev.Right = root
+			root.Left = prev
+		} else {
+			head = root
+		}
+		prev = root
+		dfs(root.Right)
+	}
+	dfs(root)
+	prev.Right = head
+	head.Left = prev
+	return head
+}
+```
+
+#### JavaScript
 
 ```js
 /**
  * // Definition for a Node.
- * function Node(val,left,right) {
- *    this.val = val;
- *    this.left = left;
- *    this.right = right;
- * };
+ * function Node(val, left, right) {
+ *      this.val = val;
+ *      this.left = left;
+ *      this.right = right;
+ *  };
  */
+
 /**
  * @param {Node} root
  * @return {Node}
  */
 var treeToDoublyList = function (root) {
-  function dfs(cur) {
-    if (!cur) return;
-    dfs(cur.left);
-    if (!pre) head = cur;
-    else pre.right = cur;
-    cur.left = pre;
-    pre = cur;
-    dfs(cur.right);
-  }
-  if (!root) return null;
-  let head, pre;
-  dfs(root);
-  head.left = pre;
-  pre.right = head;
-  return head;
+    if (!root) return root;
+    let prev = null;
+    let head = null;
+
+    function dfs(root) {
+        if (!root) return;
+        dfs(root.left);
+        if (prev) {
+            prev.right = root;
+            root.left = prev;
+        } else {
+            head = root;
+        }
+        prev = root;
+        dfs(root.right);
+    }
+    dfs(root);
+    prev.right = head;
+    head.left = prev;
+    return head;
 };
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

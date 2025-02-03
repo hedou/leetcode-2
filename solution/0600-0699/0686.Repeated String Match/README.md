@@ -1,10 +1,21 @@
-# [686. 重复叠加字符串匹配](https://leetcode-cn.com/problems/repeated-string-match)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0600-0699/0686.Repeated%20String%20Match/README.md
+tags:
+    - 字符串
+    - 字符串匹配
+---
+
+<!-- problem:start -->
+
+# [686. 重复叠加字符串匹配](https://leetcode.cn/problems/repeated-string-match)
 
 [English Version](/solution/0600-0699/0686.Repeated%20String%20Match/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给定两个字符串&nbsp;<code>a</code> 和 <code>b</code>，寻找重复叠加字符串 <code>a</code> 的最小次数，使得字符串 <code>b</code> 成为叠加后的字符串 <code>a</code> 的子串，如果不存在则返回 <code>-1</code>。</p>
 
@@ -47,33 +58,113 @@
 	<li><code>a</code> 和 <code>b</code> 由小写英文字母组成</li>
 </ul>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def repeatedStringMatch(self, a: str, b: str) -> int:
+        m, n = len(a), len(b)
+        ans = ceil(n / m)
+        t = [a] * ans
+        for _ in range(3):
+            if b in ''.join(t):
+                return ans
+            ans += 1
+            t.append(a)
+        return -1
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
-
+class Solution {
+    public int repeatedStringMatch(String a, String b) {
+        int m = a.length(), n = b.length();
+        int ans = (n + m - 1) / m;
+        StringBuilder t = new StringBuilder(a.repeat(ans));
+        for (int i = 0; i < 3; ++i) {
+            if (t.toString().contains(b)) {
+                return ans;
+            }
+            ++ans;
+            t.append(a);
+        }
+        return -1;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int repeatedStringMatch(string a, string b) {
+        int m = a.size(), n = b.size();
+        int ans = (n + m - 1) / m;
+        string t = "";
+        for (int i = 0; i < ans; ++i) t += a;
+        for (int i = 0; i < 3; ++i) {
+            if (t.find(b) != -1) return ans;
+            ++ans;
+            t += a;
+        }
+        return -1;
+    }
+};
 ```
 
+#### Go
+
+```go
+func repeatedStringMatch(a string, b string) int {
+	m, n := len(a), len(b)
+	ans := (n + m - 1) / m
+	t := strings.Repeat(a, ans)
+	for i := 0; i < 3; i++ {
+		if strings.Contains(t, b) {
+			return ans
+		}
+		ans++
+		t += a
+	}
+	return -1
+}
+```
+
+#### TypeScript
+
+```ts
+function repeatedStringMatch(a: string, b: string): number {
+    const m: number = a.length,
+        n: number = b.length;
+    let ans: number = Math.ceil(n / m);
+    let t: string = a.repeat(ans);
+
+    for (let i = 0; i < 3; i++) {
+        if (t.includes(b)) {
+            return ans;
+        }
+        ans++;
+        t += a;
+    }
+
+    return -1;
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

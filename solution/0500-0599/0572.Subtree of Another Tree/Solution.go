@@ -7,21 +7,15 @@
  * }
  */
 func isSubtree(root *TreeNode, subRoot *TreeNode) bool {
-	if root == nil && subRoot == nil {
-		return true
+	var same func(p, q *TreeNode) bool
+	same = func(p, q *TreeNode) bool {
+		if p == nil || q == nil {
+			return p == q
+		}
+		return p.Val == q.Val && same(p.Left, q.Left) && same(p.Right, q.Right)
 	}
-	if root == nil || subRoot == nil {
+	if root == nil {
 		return false
 	}
 	return same(root, subRoot) || isSubtree(root.Left, subRoot) || isSubtree(root.Right, subRoot)
-}
-
-func same(root1, root2 *TreeNode) bool {
-	if root1 == nil && root2 == nil {
-		return true
-	}
-	if root1 == nil || root2 == nil {
-		return false
-	}
-	return root1.Val == root2.Val && same(root1.Left, root2.Left) && same(root1.Right, root2.Right)
 }

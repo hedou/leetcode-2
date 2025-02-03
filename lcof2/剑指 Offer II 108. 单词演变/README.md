@@ -1,8 +1,15 @@
-# [剑指 Offer II 108. 单词演变](https://leetcode-cn.com/problems/om3reC)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20108.%20%E5%8D%95%E8%AF%8D%E6%BC%94%E5%8F%98/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 108. 单词演变](https://leetcode.cn/problems/om3reC)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>在字典（单词列表）&nbsp;<code>wordList</code> 中，从单词 <code>beginWord</code><em>&nbsp;</em>和 <code>endWord</code> 的 <strong>转换序列 </strong>是一个按下述规格形成的序列：</p>
 
@@ -48,35 +55,194 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 127&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/word-ladder/">https://leetcode-cn.com/problems/word-ladder/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 127&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/word-ladder/">https://leetcode.cn/problems/word-ladder/</a></p>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
-
+class Solution:
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        words = set(wordList)
+        q = deque([beginWord])
+        ans = 1
+        while q:
+            n = len(q)
+            for _ in range(n):
+                s = q.popleft()
+                s = list(s)
+                for i in range(len(s)):
+                    ch = s[i]
+                    for j in range(26):
+                        s[i] = chr(ord('a') + j)
+                        t = ''.join(s)
+                        if t not in words:
+                            continue
+                        if t == endWord:
+                            return ans + 1
+                        q.append(t)
+                        words.remove(t)
+                    s[i] = ch
+            ans += 1
+        return 0
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
 
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Set<String> words = new HashSet<>(wordList);
+        Queue<String> q = new LinkedList<>();
+        q.offer(beginWord);
+        int ans = 1;
+        while (!q.isEmpty()) {
+            for (int i = q.size(); i > 0; --i) {
+                String s = q.poll();
+                char[] chars = s.toCharArray();
+                for (int j = 0; j < chars.length; ++j) {
+                    char ch = chars[j];
+                    for (char k = 'a'; k <= 'z'; ++k) {
+                        chars[j] = k;
+                        String t = new String(chars);
+                        if (!words.contains(t)) {
+                            continue;
+                        }
+                        if (endWord.equals(t)) {
+                            return ans + 1;
+                        }
+                        q.offer(t);
+                        words.remove(t);
+                    }
+                    chars[j] = ch;
+                }
+            }
+            ++ans;
+        }
+        return 0;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> words(wordList.begin(), wordList.end());
+        queue<string> q{{beginWord}};
+        int ans = 1;
+        while (!q.empty()) {
+            for (int i = q.size(); i > 0; --i) {
+                string s = q.front();
+                q.pop();
+                for (int j = 0; j < s.size(); ++j) {
+                    char ch = s[j];
+                    for (char k = 'a'; k <= 'z'; ++k) {
+                        s[j] = k;
+                        if (!words.count(s)) continue;
+                        if (s == endWord) return ans + 1;
+                        q.push(s);
+                        words.erase(s);
+                    }
+                    s[j] = ch;
+                }
+            }
+            ++ans;
+        }
+        return 0;
+    }
+};
 ```
 
+#### Go
+
+```go
+func ladderLength(beginWord string, endWord string, wordList []string) int {
+	words := make(map[string]bool)
+	for _, word := range wordList {
+		words[word] = true
+	}
+	q := []string{beginWord}
+	ans := 1
+	for len(q) > 0 {
+		for i := len(q); i > 0; i-- {
+			s := q[0]
+			q = q[1:]
+			chars := []byte(s)
+			for j := 0; j < len(chars); j++ {
+				ch := chars[j]
+				for k := 'a'; k <= 'z'; k++ {
+					chars[j] = byte(k)
+					t := string(chars)
+					if !words[t] {
+						continue
+					}
+					if t == endWord {
+						return ans + 1
+					}
+					q = append(q, t)
+					words[t] = false
+				}
+				chars[j] = ch
+			}
+		}
+		ans++
+	}
+	return 0
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func ladderLength(_ beginWord: String, _ endWord: String, _ wordList: [String]) -> Int {
+        var words = Set(wordList)
+        var queue = [beginWord]
+        var ans = 1
+
+        while !queue.isEmpty {
+            for _ in 0..<queue.count {
+                let s = queue.removeFirst()
+                var chars = Array(s)
+                for j in 0..<chars.count {
+                    let ch = chars[j]
+                    for k in 0..<26 {
+                        chars[j] = Character(UnicodeScalar(k + 97)!)
+                        let t = String(chars)
+                        if !words.contains(t) {
+                            continue
+                        }
+                        if t == endWord {
+                            return ans + 1
+                        }
+                        queue.append(t)
+                        words.remove(t)
+                    }
+                    chars[j] = ch
+                }
+            }
+            ans += 1
+        }
+        return 0
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

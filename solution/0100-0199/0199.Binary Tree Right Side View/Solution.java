@@ -23,7 +23,7 @@ class Solution {
         q.offer(root);
         while (!q.isEmpty()) {
             ans.add(q.peekFirst().val);
-            for (int i = q.size(); i > 0; --i) {
+            for (int k = q.size(); k > 0; --k) {
                 TreeNode node = q.poll();
                 if (node.right != null) {
                     q.offer(node.right);

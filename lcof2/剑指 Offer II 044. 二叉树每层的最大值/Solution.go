@@ -13,9 +13,8 @@ func largestValues(root *TreeNode) []int {
 	}
 	var q = []*TreeNode{root}
 	for len(q) > 0 {
-		n := len(q)
 		t := math.MinInt32
-		for i := 0; i < n; i++ {
+		for i := len(q); i > 0; i-- {
 			node := q[0]
 			q = q[1:]
 			t = max(t, node.Val)
@@ -29,11 +28,4 @@ func largestValues(root *TreeNode) []int {
 		ans = append(ans, t)
 	}
 	return ans
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
 }

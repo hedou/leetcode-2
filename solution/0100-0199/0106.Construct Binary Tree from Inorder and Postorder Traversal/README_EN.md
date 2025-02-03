@@ -1,20 +1,36 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0100-0199/0106.Construct%20Binary%20Tree%20from%20Inorder%20and%20Postorder%20Traversal/README_EN.md
+tags:
+    - Tree
+    - Array
+    - Hash Table
+    - Divide and Conquer
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
 # [106. Construct Binary Tree from Inorder and Postorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal)
 
 [中文文档](/solution/0100-0199/0106.Construct%20Binary%20Tree%20from%20Inorder%20and%20Postorder%20Traversal/README.md)
 
 ## Description
 
+<!-- description:start -->
+
 <p>Given two integer arrays <code>inorder</code> and <code>postorder</code> where <code>inorder</code> is the inorder traversal of a binary tree and <code>postorder</code> is the postorder traversal of the same tree, construct and return <em>the binary tree</em>.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0106.Construct%20Binary%20Tree%20from%20Inorder%20and%20Postorder%20Traversal/images/tree.jpg" style="width: 277px; height: 302px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0100-0199/0106.Construct%20Binary%20Tree%20from%20Inorder%20and%20Postorder%20Traversal/images/tree.jpg" style="width: 277px; height: 302px;" />
 <pre>
 <strong>Input:</strong> inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
 <strong>Output:</strong> [3,9,20,null,null,15,7]
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> inorder = [-1], postorder = [-1]
@@ -34,40 +50,51 @@
 	<li><code>postorder</code> is <strong>guaranteed</strong> to be the postorder traversal of the tree.</li>
 </ul>
 
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1: Hash Table + Recursion
+
+The last node in the post-order traversal is the root node. We can find the position of the root node in the in-order traversal, and then recursively construct the left and right subtrees.
+
+Specifically, we first use a hash table $d$ to store the position of each node in the in-order traversal. Then we design a recursive function $dfs(i, j, n)$, where $i$ and $j$ represent the starting positions of the in-order and post-order traversals, respectively, and $n$ represents the number of nodes in the subtree. The function logic is as follows:
+
+-   If $n \leq 0$, it means the subtree is empty, return a null node.
+-   Otherwise, take out the last node $v$ of the post-order traversal, and then find the position $k$ of $v$ in the in-order traversal using the hash table $d$. Then the number of nodes in the left subtree is $k - i$, and the number of nodes in the right subtree is $n - k + i - 1$.
+-   Recursively construct the left subtree $dfs(i, j, k - i)$ and the right subtree $dfs(k + 1, j + k - i, n - k + i - 1)$, connect them to the root node, and finally return the root node.
+
+The time complexity is $O(n)$, and the space complexity is $O(n)$. Here, $n$ is the number of nodes in the binary tree.
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
 # class TreeNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.left = None
-#         self.right = None
-
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
 class Solution:
-    indexes = {}
-    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
-        def build(inorder, postorder, i1, i2, p1, p2):
-            if i1 > i2 or p1 > p2:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        def dfs(i: int, j: int, n: int) -> Optional[TreeNode]:
+            if n <= 0:
                 return None
-            root_val = postorder[p2]
-            pos = self.indexes[root_val]
-            root = TreeNode(root_val)
-            root.left = None if pos == i1 else build(inorder, postorder, i1, pos - 1, p1, p1 - i1 + pos - 1)
-            root.right = None if pos == i2 else build(inorder, postorder, pos + 1, i2, p1 - i1 + pos, p2 - 1)
-            return root
-        n = len(inorder)
-        for i in range(n):
-            self.indexes[inorder[i]] = i
-        return build(inorder, postorder, 0, n - 1, 0, n - 1)
+            v = postorder[j + n - 1]
+            k = d[v]
+            l = dfs(i, j, k - i)
+            r = dfs(k + 1, j + k - i, n - k + i - 1)
+            return TreeNode(v, l, r)
+
+        d = {v: i for i, v in enumerate(inorder)}
+        return dfs(0, 0, len(inorder))
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -76,59 +103,200 @@ class Solution:
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    private Map<Integer, Integer> indexes = new HashMap<>();
+    private Map<Integer, Integer> d = new HashMap<>();
+    private int[] postorder;
 
     public TreeNode buildTree(int[] inorder, int[] postorder) {
+        this.postorder = postorder;
         int n = inorder.length;
         for (int i = 0; i < n; ++i) {
-            indexes.put(inorder[i], i);
+            d.put(inorder[i], i);
         }
-        return build(inorder, postorder, 0, inorder.length - 1, 0, postorder.length - 1);
+        return dfs(0, 0, n);
     }
 
-    private TreeNode build(int[] inorder, int[] postorder, int i1, int i2, int p1, int p2) {
-        if (i1 > i2 || p1 > p2) return null;
-        int rootVal = postorder[p2];
-        int pos = indexes.get(rootVal);
-        TreeNode root = new TreeNode(rootVal);
-        root.left = pos == i1 ? null : build(inorder, postorder, i1, pos - 1, p1, p1 - i1 + pos - 1);
-        root.right = pos == i2 ? null : build(inorder, postorder, pos + 1, i2, p1 - i1 + pos, p2 - 1);
-        return root;
+    private TreeNode dfs(int i, int j, int n) {
+        if (n <= 0) {
+            return null;
+        }
+        int v = postorder[j + n - 1];
+        int k = d.get(v);
+        TreeNode l = dfs(i, j, k - i);
+        TreeNode r = dfs(k + 1, j + k - i, n - k + i - 1);
+        return new TreeNode(v, l, r);
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
 public:
-    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
-        return buildTree(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
-    }
-    TreeNode *buildTree(vector<int> &inorder, int iLeft, int iRight, vector<int> &postorder, int pLeft, int pRight) {
-        if (iLeft > iRight || pLeft > pRight) return NULL;
-        TreeNode *cur = new TreeNode(postorder[pRight]);
-        int i = 0;
-        for (i = iLeft; i < inorder.size(); ++i) {
-            if (inorder[i] == cur->val)
-                break;
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        unordered_map<int, int> d;
+        int n = inorder.size();
+        for (int i = 0; i < n; ++i) {
+            d[inorder[i]] = i;
         }
-        cur->left = buildTree(inorder, iLeft, i - 1, postorder, pLeft, pLeft + i - iLeft - 1);
-        cur->right = buildTree(inorder, i + 1, iRight, postorder, pLeft + i - iLeft, pRight - 1);
-        return cur;
+        function<TreeNode*(int, int, int)> dfs = [&](int i, int j, int n) -> TreeNode* {
+            if (n <= 0) {
+                return nullptr;
+            }
+            int v = postorder[j + n - 1];
+            int k = d[v];
+            auto l = dfs(i, j, k - i);
+            auto r = dfs(k + 1, j + k - i, n - k + i - 1);
+            return new TreeNode(v, l, r);
+        };
+        return dfs(0, 0, n);
     }
 };
 ```
 
-### **...**
+#### Go
 
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func buildTree(inorder []int, postorder []int) *TreeNode {
+	d := map[int]int{}
+	for i, v := range inorder {
+		d[v] = i
+	}
+	var dfs func(i, j, n int) *TreeNode
+	dfs = func(i, j, n int) *TreeNode {
+		if n <= 0 {
+			return nil
+		}
+		v := postorder[j+n-1]
+		k := d[v]
+		l := dfs(i, j, k-i)
+		r := dfs(k+1, j+k-i, n-k+i-1)
+		return &TreeNode{v, l, r}
+	}
+	return dfs(0, 0, len(inorder))
+}
 ```
 
+#### TypeScript
+
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
+    const n = inorder.length;
+    const d: Record<number, number> = {};
+    for (let i = 0; i < n; i++) {
+        d[inorder[i]] = i;
+    }
+    const dfs = (i: number, j: number, n: number): TreeNode | null => {
+        if (n <= 0) {
+            return null;
+        }
+        const v = postorder[j + n - 1];
+        const k = d[v];
+        const l = dfs(i, j, k - i);
+        const r = dfs(k + 1, j + k - i, n - 1 - (k - i));
+        return new TreeNode(v, l, r);
+    };
+    return dfs(0, 0, n);
+}
+```
+
+#### Rust
+
+```rust
+// Definition for a binary tree node.
+// #[derive(Debug, PartialEq, Eq)]
+// pub struct TreeNode {
+//   pub val: i32,
+//   pub left: Option<Rc<RefCell<TreeNode>>>,
+//   pub right: Option<Rc<RefCell<TreeNode>>>,
+// }
+//
+// impl TreeNode {
+//   #[inline]
+//   pub fn new(val: i32) -> Self {
+//     TreeNode {
+//       val,
+//       left: None,
+//       right: None
+//     }
+//   }
+// }
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+impl Solution {
+    pub fn build_tree(inorder: Vec<i32>, postorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+        let n = inorder.len();
+        let mut d: HashMap<i32, usize> = HashMap::new();
+        for i in 0..n {
+            d.insert(inorder[i], i);
+        }
+        fn dfs(
+            postorder: &[i32],
+            d: &HashMap<i32, usize>,
+            i: usize,
+            j: usize,
+            n: usize,
+        ) -> Option<Rc<RefCell<TreeNode>>> {
+            if n <= 0 {
+                return None;
+            }
+            let val = postorder[j + n - 1];
+            let k = *d.get(&val).unwrap();
+            let left = dfs(postorder, d, i, j, k - i);
+            let right = dfs(postorder, d, k + 1, j + k - i, n - 1 - (k - i));
+            Some(Rc::new(RefCell::new(TreeNode { val, left, right })))
+        }
+        dfs(&postorder, &d, 0, 0, n)
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

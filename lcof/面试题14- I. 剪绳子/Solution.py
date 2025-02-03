@@ -1,11 +1,7 @@
 class Solution:
     def cuttingRope(self, n: int) -> int:
-        if n < 4:
-            return n - 1
-        res = 1
-        while n > 4:
-            res *= 3
-            n -= 3
-        if n == 4:
-            return res << 2
-        return res * n
+        f = [1] * (n + 1)
+        for i in range(2, n + 1):
+            for j in range(1, i):
+                f[i] = max(f[i], f[i - j] * j, (i - j) * j)
+        return f[n]

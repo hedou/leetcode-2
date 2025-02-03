@@ -3,17 +3,14 @@
  * @return {number}
  */
 var leastBricks = function (wall) {
-  const cnt = new Map();
-  for (const row of wall) {
-    let width = 0;
-    for (let i = 0, n = row.length - 1; i < n; ++i) {
-      width += row[i];
-      cnt.set(width, (cnt.get(width) || 0) + 1);
+    const cnt = new Map();
+    for (const row of wall) {
+        let s = 0;
+        for (let i = 0; i + 1 < row.length; ++i) {
+            s += row[i];
+            cnt.set(s, (cnt.get(s) || 0) + 1);
+        }
     }
-  }
-  let max = 0;
-  for (const v of cnt.values()) {
-    max = Math.max(max, v);
-  }
-  return wall.length - max;
+    const mx = Math.max(...cnt.values(), 0);
+    return wall.length - mx;
 };

@@ -9,10 +9,7 @@
  * @param {ListNode} head
  * @return {boolean}
  */
- var isPalindrome = function(head) {
-    if (!head || !head.next) {
-        return true;
-    }
+var isPalindrome = function (head) {
     let slow = head;
     let fast = head.next;
     while (fast && fast.next) {

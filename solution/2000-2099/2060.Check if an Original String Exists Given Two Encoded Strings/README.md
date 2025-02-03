@@ -1,10 +1,23 @@
-# [2060. 同源字符串检测](https://leetcode-cn.com/problems/check-if-an-original-string-exists-given-two-encoded-strings)
+---
+comments: true
+difficulty: 困难
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2060.Check%20if%20an%20Original%20String%20Exists%20Given%20Two%20Encoded%20Strings/README.md
+rating: 2803
+source: 第 265 场周赛 Q4
+tags:
+    - 字符串
+    - 动态规划
+---
+
+<!-- problem:start -->
+
+# [2060. 同源字符串检测](https://leetcode.cn/problems/check-if-an-original-string-exists-given-two-encoded-strings)
 
 [English Version](/solution/2000-2099/2060.Check%20if%20an%20Original%20String%20Exists%20Given%20Two%20Encoded%20Strings/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>原字符串由小写字母组成，可以按下述步骤编码：</p>
 
@@ -101,42 +114,30 @@
 	<li><code>s1</code> 和 <code>s2</code> 中连续数字数不超过 <code>3</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-动态规划
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```python
-
-```
-
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
-
-```java
-
-```
-
-### **TypeScript**
+#### TypeScript
 
 ```ts
 function possiblyEquals(s1: string, s2: string): boolean {
-    const n = s1.length, m = s2.length;
-    let dp: Array<Array<Set<number>>> = Array.from({ length: n + 1 }, v => Array.from({ length: m + 1}, w => new Set()));
+    const n = s1.length,
+        m = s2.length;
+    let dp: Array<Array<Set<number>>> = Array.from({ length: n + 1 }, v =>
+        Array.from({ length: m + 1 }, w => new Set()),
+    );
     dp[0][0].add(0);
 
     for (let i = 0; i <= n; i++) {
         for (let j = 0; j <= m; j++) {
             for (let delta of dp[i][j]) {
-
                 // s1为数字
                 let num = 0;
                 if (delta <= 0) {
@@ -177,22 +178,19 @@ function possiblyEquals(s1: string, s2: string): boolean {
                 if (i < n && j < m && delta == 0 && s1[i] == s2[j]) {
                     dp[i + 1][j + 1].add(0);
                 }
-
             }
         }
     }
     return dp[n][m].has(0);
-};
+}
 
 function isDigit(char: string): boolean {
-    return (/^\d{1}$/g).test(char);
+    return /^\d{1}$/g.test(char);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

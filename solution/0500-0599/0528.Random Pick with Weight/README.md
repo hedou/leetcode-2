@@ -1,26 +1,43 @@
-# [528. 按权重随机选择](https://leetcode-cn.com/problems/random-pick-with-weight)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0500-0599/0528.Random%20Pick%20with%20Weight/README.md
+tags:
+    - 数组
+    - 数学
+    - 二分查找
+    - 前缀和
+    - 随机化
+---
+
+<!-- problem:start -->
+
+# [528. 按权重随机选择](https://leetcode.cn/problems/random-pick-with-weight)
 
 [English Version](/solution/0500-0599/0528.Random%20Pick%20with%20Weight/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个正整数数组&nbsp;<code>w</code> ，其中&nbsp;<code>w[i]</code>&nbsp;代表下标 <code>i</code>&nbsp;的权重（下标从 <code>0</code> 开始），请写一个函数&nbsp;<code>pickIndex</code>&nbsp;，它可以随机地获取下标 <code>i</code>，选取下标 <code>i</code>&nbsp;的概率与&nbsp;<code>w[i]</code>&nbsp;成正比。</p>
+<p>给你一个 <strong>下标从 0 开始</strong> 的正整数数组&nbsp;<code>w</code> ，其中&nbsp;<code>w[i]</code> 代表第 <code>i</code> 个下标的权重。</p>
+
+<p>请你实现一个函数&nbsp;<code>pickIndex</code>&nbsp;，它可以 <strong>随机地</strong> 从范围 <code>[0, w.length - 1]</code> 内（含 <code>0</code> 和 <code>w.length - 1</code>）选出并返回一个下标。选取下标 <code>i</code>&nbsp;的 <strong>概率</strong> 为 <code>w[i] / sum(w)</code> 。</p>
 
 <ol>
 </ol>
 
-<p>例如，对于 <code>w = [1, 3]</code>，挑选下标 <code>0</code> 的概率为 <code>1 / (1 + 3)&nbsp;= 0.25</code> （即，25%），而选取下标 <code>1</code> 的概率为 <code>3 / (1 + 3)&nbsp;= 0.75</code>（即，75%）。</p>
-
-<p>也就是说，选取下标 <code>i</code> 的概率为 <code>w[i] / sum(w)</code> 。</p>
+<ul>
+	<li>例如，对于 <code>w = [1, 3]</code>，挑选下标 <code>0</code> 的概率为 <code>1 / (1 + 3)&nbsp;= 0.25</code> （即，25%），而选取下标 <code>1</code> 的概率为 <code>3 / (1 + 3)&nbsp;= 0.75</code>（即，<code>75%</code>）。</li>
+</ul>
 
 <p>&nbsp;</p>
 
 <p><strong>示例 1：</strong></p>
 
-<pre><strong>输入：</strong>
-[&quot;Solution&quot;,&quot;pickIndex&quot;]
+<pre>
+<strong>输入：</strong>
+["Solution","pickIndex"]
 [[[1]],[]]
 <strong>输出：</strong>
 [null,0]
@@ -30,8 +47,9 @@ solution.pickIndex(); // 返回 0，因为数组中只有一个元素，所以�
 
 <p><strong>示例 2：</strong></p>
 
-<pre><strong>输入：</strong>
-[&quot;Solution&quot;,&quot;pickIndex&quot;,&quot;pickIndex&quot;,&quot;pickIndex&quot;,&quot;pickIndex&quot;,&quot;pickIndex&quot;]
+<pre>
+<strong>输入：</strong>
+["Solution","pickIndex","pickIndex","pickIndex","pickIndex","pickIndex"]
 [[[1,3]],[],[],[],[],[]]
 <strong>输出：</strong>
 [null,1,1,1,1,0]
@@ -58,78 +76,74 @@ solution.pickIndex(); // 返回 0，返回下标 0，返回该下标概率为 1/
 <p><strong>提示：</strong></p>
 
 <ul>
-	<li><code>1 &lt;= w.length &lt;= 10000</code></li>
-	<li><code>1 &lt;= w[i] &lt;= 10^5</code></li>
-	<li><code>pickIndex</code>&nbsp;将被调用不超过&nbsp;<code>10000</code>&nbsp;次</li>
+	<li><code>1 &lt;= w.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= w[i] &lt;= 10<sup>5</sup></code></li>
+	<li><code>pickIndex</code>&nbsp;将被调用不超过 <code>10<sup>4</sup></code>&nbsp;次</li>
 </ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-“前缀和 + 二分查找”。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
-
     def __init__(self, w: List[int]):
-        n = len(w)
-        self.presum = [0] * (n + 1)
-        for i in range(n):
-            self.presum[i + 1] = self.presum[i] + w[i]
+        self.s = [0]
+        for c in w:
+            self.s.append(self.s[-1] + c)
 
     def pickIndex(self) -> int:
-        n = len(self.presum)
-        x = random.randint(1, self.presum[-1])
-        left, right = 0, n - 2
+        x = random.randint(1, self.s[-1])
+        left, right = 1, len(self.s) - 1
         while left < right:
             mid = (left + right) >> 1
-            if self.presum[mid + 1] >= x:
+            if self.s[mid] >= x:
                 right = mid
             else:
                 left = mid + 1
-        return left
+        return left - 1
+
 
 # Your Solution object will be instantiated and called as such:
 # obj = Solution(w)
 # param_1 = obj.pickIndex()
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
-    private int[] presum;
+    private int[] s;
+    private Random random = new Random();
 
     public Solution(int[] w) {
         int n = w.length;
-        presum = new int[n + 1];
+        s = new int[n + 1];
         for (int i = 0; i < n; ++i) {
-            presum[i + 1] = presum[i] + w[i];
+            s[i + 1] = s[i] + w[i];
         }
     }
 
     public int pickIndex() {
-        int n = presum.length;
-        int x = (int) (Math.random() * presum[n - 1]) + 1;
-        int left = 0, right = n - 2;
+        int x = 1 + random.nextInt(s[s.length - 1]);
+        int left = 1, right = s.length - 1;
         while (left < right) {
             int mid = (left + right) >> 1;
-            if (presum[mid + 1] >= x) {
+            if (s[mid] >= x) {
                 right = mid;
             } else {
                 left = mid + 1;
             }
         }
-        return left;
+        return left - 1;
     }
 }
 
@@ -140,30 +154,31 @@ class Solution {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
-    vector<int> presum;
+    vector<int> s;
 
     Solution(vector<int>& w) {
         int n = w.size();
-        presum.resize(n + 1);
-        for (int i = 0; i < n; ++i) presum[i + 1] = presum[i] + w[i];
+        s.resize(n + 1);
+        for (int i = 0; i < n; ++i) s[i + 1] = s[i] + w[i];
     }
 
     int pickIndex() {
-        int n = presum.size();
-        int x = rand() % presum[n - 1] + 1;
-        int left = 0, right = n - 2;
-        while (left < right)
-        {
+        int n = s.size();
+        int x = 1 + rand() % s[n - 1];
+        int left = 1, right = n - 1;
+        while (left < right) {
             int mid = left + right >> 1;
-            if (presum[mid + 1] >= x) right = mid;
-            else left = mid + 1;
+            if (s[mid] >= x)
+                right = mid;
+            else
+                left = mid + 1;
         }
-        return left;
+        return left - 1;
     }
 };
 
@@ -174,35 +189,35 @@ public:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
 type Solution struct {
-	presum []int
+	s []int
 }
 
 func Constructor(w []int) Solution {
 	n := len(w)
-	pre := make([]int, n+1)
+	s := make([]int, n+1)
 	for i := 0; i < n; i++ {
-		pre[i+1] = pre[i] + w[i]
+		s[i+1] = s[i] + w[i]
 	}
-	return Solution{pre}
+	return Solution{s}
 }
 
 func (this *Solution) PickIndex() int {
-	n := len(this.presum)
-	x := rand.Intn(this.presum[n-1]) + 1
-	left, right := 0, n-2
+	n := len(this.s)
+	x := 1 + rand.Intn(this.s[n-1])
+	left, right := 1, n-1
 	for left < right {
 		mid := (left + right) >> 1
-		if this.presum[mid+1] >= x {
+		if this.s[mid] >= x {
 			right = mid
 		} else {
 			left = mid + 1
 		}
 	}
-	return left
+	return left - 1
 }
 
 /**
@@ -212,10 +227,87 @@ func (this *Solution) PickIndex() int {
  */
 ```
 
-### **...**
+#### Rust
 
+```rust
+use rand::{thread_rng, Rng};
+
+struct Solution {
+    sum: Vec<i32>,
+}
+
+/**
+ * `&self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&mut self` instead.
+ */
+impl Solution {
+    fn new(w: Vec<i32>) -> Self {
+        let n = w.len();
+        let mut sum = vec![0; n + 1];
+        for i in 1..=n {
+            sum[i] = sum[i - 1] + w[i - 1];
+        }
+        Self { sum }
+    }
+
+    fn pick_index(&self) -> i32 {
+        let x = thread_rng().gen_range(1, self.sum.last().unwrap() + 1);
+        let (mut left, mut right) = (1, self.sum.len() - 1);
+        while left < right {
+            let mid = (left + right) >> 1;
+            if self.sum[mid] < x {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        (left - 1) as i32
+    }
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * @param {number[]} w
+ */
+var Solution = function (w) {
+    const n = w.length;
+    this.s = new Array(n + 1).fill(0);
+    for (let i = 0; i < n; ++i) {
+        this.s[i + 1] = this.s[i] + w[i];
+    }
+};
+
+/**
+ * @return {number}
+ */
+Solution.prototype.pickIndex = function () {
+    const n = this.s.length;
+    const x = 1 + Math.floor(Math.random() * this.s[n - 1]);
+    let left = 1,
+        right = n - 1;
+    while (left < right) {
+        const mid = (left + right) >> 1;
+        if (this.s[mid] >= x) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return left - 1;
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * var obj = new Solution(w)
+ * var param_1 = obj.pickIndex()
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

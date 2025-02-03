@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0208.Implement%20Trie%20%28Prefix%20Tree%29/README_EN.md
+tags:
+    - Design
+    - Trie
+    - Hash Table
+    - String
+---
+
+<!-- problem:start -->
+
 # [208. Implement Trie (Prefix Tree)](https://leetcode.com/problems/implement-trie-prefix-tree)
 
 [中文文档](/solution/0200-0299/0208.Implement%20Trie%20%28Prefix%20Tree%29/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A <a href="https://en.wikipedia.org/wiki/Trie" target="_blank"><strong>trie</strong></a> (pronounced as &quot;try&quot;) or <strong>prefix tree</strong> is a tree data structure used to efficiently store and retrieve keys in a dataset of strings. There are various applications of this data structure, such as autocomplete and spellchecker.</p>
 
@@ -16,7 +31,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -44,16 +59,20 @@ trie.search(&quot;app&quot;);     // return True
 	<li>At most <code>3 * 10<sup>4</sup></code> calls <strong>in total</strong> will be made to <code>insert</code>, <code>search</code>, and <code>startsWith</code>.</li>
 </ul>
 
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class Trie:
-
     def __init__(self):
         self.children = [None] * 26
         self.is_end = False
@@ -84,6 +103,7 @@ class Trie:
             node = node.children[idx]
         return node
 
+
 # Your Trie object will be instantiated and called as such:
 # obj = Trie()
 # obj.insert(word)
@@ -91,7 +111,7 @@ class Trie:
 # param_3 = obj.startsWith(prefix)
 ```
 
-### **Java**
+#### Java
 
 ```java
 class Trie {
@@ -101,7 +121,7 @@ class Trie {
     public Trie() {
         children = new Trie[26];
     }
-    
+
     public void insert(String word) {
         Trie node = this;
         for (char c : word.toCharArray()) {
@@ -113,12 +133,12 @@ class Trie {
         }
         node.isEnd = true;
     }
-    
+
     public boolean search(String word) {
         Trie node = searchPrefix(word);
         return node != null && node.isEnd;
     }
-    
+
     public boolean startsWith(String prefix) {
         Trie node = searchPrefix(prefix);
         return node != null;
@@ -146,70 +166,7 @@ class Trie {
  */
 ```
 
-### **JavaScript**
-
-```js
-/**
- * Initialize your data structure here.
- */
-var Trie = function() {
-    this.children = {};
-};
-
-/**
- * Inserts a word into the trie. 
- * @param {string} word
- * @return {void}
- */
-Trie.prototype.insert = function(word) {
-    let node = this.children;
-    for (let char of word) {
-        if (!node[char]) {
-            node[char] = {};
-        }
-        node = node[char];
-    }
-    node.isEnd = true;
-};
-
-/**
- * Returns if the word is in the trie. 
- * @param {string} word
- * @return {boolean}
- */
-Trie.prototype.search = function(word) {
-    let node = this.searchPrefix(word);
-    return node != undefined && node.isEnd != undefined;
-};
-
-Trie.prototype.searchPrefix = function (prefix) {
-    let node = this.children;
-    for (let char of prefix) {
-        if (!node[char]) return false;
-        node = node[char];
-    }
-    return node;
-}
-
-/**
- * Returns if there is any word in the trie that starts with the given prefix. 
- * @param {string} prefix
- * @return {boolean}
- */
-Trie.prototype.startsWith = function(prefix) {
-    return this.searchPrefix(prefix);
-};
-
-/**
- * Your Trie object will be instantiated and called as such:
- * var obj = new Trie()
- * obj.insert(word)
- * var param_2 = obj.search(word)
- * var param_3 = obj.startsWith(prefix)
- */
-```
-
-### **C++**
+#### C++
 
 ```cpp
 class Trie {
@@ -219,8 +176,7 @@ private:
 
     Trie* searchPrefix(string s) {
         Trie* node = this;
-        for (char c : s)
-        {
+        for (char c : s) {
             int idx = c - 'a';
             if (!node->children[idx]) return nullptr;
             node = node->children[idx];
@@ -229,24 +185,25 @@ private:
     }
 
 public:
-    Trie() : children(26), isEnd(false) {}
-    
+    Trie()
+        : children(26)
+        , isEnd(false) {}
+
     void insert(string word) {
         Trie* node = this;
-        for (char c : word)
-        {
+        for (char c : word) {
             int idx = c - 'a';
             if (!node->children[idx]) node->children[idx] = new Trie();
             node = node->children[idx];
         }
         node->isEnd = true;
     }
-    
+
     bool search(string word) {
         Trie* node = searchPrefix(word);
         return node != nullptr && node->isEnd;
     }
-    
+
     bool startsWith(string prefix) {
         Trie* node = searchPrefix(prefix);
         return node != nullptr;
@@ -262,7 +219,7 @@ public:
  */
 ```
 
-### **Go**
+#### Go
 
 ```go
 type Trie struct {
@@ -317,7 +274,219 @@ func (this *Trie) SearchPrefix(s string) *Trie {
  */
 ```
 
-### **C#**
+#### TypeScript
+
+```ts
+class TrieNode {
+    children;
+    isEnd;
+    constructor() {
+        this.children = new Array(26);
+        this.isEnd = false;
+    }
+}
+
+class Trie {
+    root;
+    constructor() {
+        this.root = new TrieNode();
+    }
+
+    insert(word: string): void {
+        let head = this.root;
+        for (let char of word) {
+            let index = char.charCodeAt(0) - 97;
+            if (!head.children[index]) {
+                head.children[index] = new TrieNode();
+            }
+            head = head.children[index];
+        }
+        head.isEnd = true;
+    }
+
+    search(word: string): boolean {
+        let head = this.searchPrefix(word);
+        return head != null && head.isEnd;
+    }
+
+    startsWith(prefix: string): boolean {
+        return this.searchPrefix(prefix) != null;
+    }
+
+    private searchPrefix(prefix: string) {
+        let head = this.root;
+        for (let char of prefix) {
+            let index = char.charCodeAt(0) - 97;
+            if (!head.children[index]) return null;
+            head = head.children[index];
+        }
+        return head;
+    }
+}
+```
+
+#### Rust
+
+```rust
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
+
+struct TrieNode {
+    pub val: Option<char>,
+    pub flag: bool,
+    pub child: HashMap<char, Rc<RefCell<TrieNode>>>,
+}
+
+impl TrieNode {
+    fn new() -> Self {
+        Self {
+            val: None,
+            flag: false,
+            child: HashMap::new(),
+        }
+    }
+
+    fn new_with_val(val: char) -> Self {
+        Self {
+            val: Some(val),
+            flag: false,
+            child: HashMap::new(),
+        }
+    }
+}
+
+struct Trie {
+    root: Rc<RefCell<TrieNode>>,
+}
+
+/// Your Trie object will be instantiated and called as such:
+/// let obj = Trie::new();
+/// obj.insert(word);
+/// let ret_2: bool = obj.search(word);
+/// let ret_3: bool = obj.starts_with(prefix);
+impl Trie {
+    fn new() -> Self {
+        Self {
+            root: Rc::new(RefCell::new(TrieNode::new())),
+        }
+    }
+
+    fn insert(&self, word: String) {
+        let char_vec: Vec<char> = word.chars().collect();
+        // Get the clone of current root node
+        let mut root = Rc::clone(&self.root);
+        for c in &char_vec {
+            if !root.borrow().child.contains_key(c) {
+                // We need to manually create the entry
+                root.borrow_mut()
+                    .child
+                    .insert(*c, Rc::new(RefCell::new(TrieNode::new())));
+            }
+            // Get the child node
+            let root_clone = Rc::clone(root.borrow().child.get(c).unwrap());
+            root = root_clone;
+        }
+        {
+            root.borrow_mut().flag = true;
+        }
+    }
+
+    fn search(&self, word: String) -> bool {
+        let char_vec: Vec<char> = word.chars().collect();
+        // Get the clone of current root node
+        let mut root = Rc::clone(&self.root);
+        for c in &char_vec {
+            if !root.borrow().child.contains_key(c) {
+                return false;
+            }
+            // Get the child node
+            let root_clone = Rc::clone(root.borrow().child.get(c).unwrap());
+            root = root_clone;
+        }
+        let flag = root.borrow().flag;
+        flag
+    }
+
+    fn starts_with(&self, prefix: String) -> bool {
+        let char_vec: Vec<char> = prefix.chars().collect();
+        // Get the clone of current root node
+        let mut root = Rc::clone(&self.root);
+        for c in &char_vec {
+            if !root.borrow().child.contains_key(c) {
+                return false;
+            }
+            // Get the child node
+            let root_clone = Rc::clone(root.borrow().child.get(c).unwrap());
+            root = root_clone;
+        }
+        true
+    }
+}
+```
+
+#### JavaScript
+
+```js
+/**
+ * Initialize your data structure here.
+ */
+var Trie = function () {
+    this.children = {};
+};
+
+/**
+ * Inserts a word into the trie.
+ * @param {string} word
+ * @return {void}
+ */
+Trie.prototype.insert = function (word) {
+    let node = this.children;
+    for (let char of word) {
+        if (!node[char]) {
+            node[char] = {};
+        }
+        node = node[char];
+    }
+    node.isEnd = true;
+};
+
+/**
+ * Returns if the word is in the trie.
+ * @param {string} word
+ * @return {boolean}
+ */
+Trie.prototype.search = function (word) {
+    let node = this.searchPrefix(word);
+    return node != undefined && node.isEnd != undefined;
+};
+
+Trie.prototype.searchPrefix = function (prefix) {
+    let node = this.children;
+    for (let char of prefix) {
+        if (!node[char]) return false;
+        node = node[char];
+    }
+    return node;
+};
+
+/**
+ * Returns if there is any word in the trie that starts with the given prefix.
+ * @param {string} prefix
+ * @return {boolean}
+ */
+Trie.prototype.startsWith = function (prefix) {
+    return this.searchPrefix(prefix);
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * var obj = new Trie()
+ * obj.insert(word)
+ * var param_2 = obj.search(word)
+ * var param_3 = obj.startsWith(prefix)
+ */
+```
+
+#### C#
 
 ```cs
 public class Trie {
@@ -373,10 +542,8 @@ public class Trie {
  */
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

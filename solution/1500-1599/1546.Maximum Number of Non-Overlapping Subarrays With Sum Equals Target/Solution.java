@@ -1,17 +1,19 @@
 class Solution {
     public int maxNonOverlapping(int[] nums, int target) {
-        Set<Integer> set = new HashSet<>();
-        set.add(0);
-        int sum = 0, ans = 0;
-        for (int num : nums) {
-            sum += num;
-            if (set.contains(sum - target)) {
-                ans++;
-                set.clear();
-                sum = 0;
+        int ans = 0, n = nums.length;
+        for (int i = 0; i < n; ++i) {
+            Set<Integer> vis = new HashSet<>();
+            int s = 0;
+            vis.add(0);
+            while (i < n) {
+                s += nums[i];
+                if (vis.contains(s - target)) {
+                    ++ans;
+                    break;
+                }
+                ++i;
+                vis.add(s);
             }
-
-            set.add(sum);
         }
         return ans;
     }

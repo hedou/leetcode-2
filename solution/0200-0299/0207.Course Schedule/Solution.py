@@ -1,20 +1,15 @@
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        edges = collections.defaultdict(list)
-        indegree = [0] * numCourses
-        for i, j in prerequisites:
-            edges[j].append(i)
-            indegree[i] += 1
-        q = collections.deque()
-        for i in range(numCourses):
-            if indegree[i] == 0:
-                q.append(i)
-        cnt = 0
-        while q:
-            i = q.popleft()
-            cnt += 1
-            for j in edges[i]:
-                indegree[j] -= 1
-                if indegree[j] == 0:
+        g = [[] for _ in range(numCourses)]
+        indeg = [0] * numCourses
+        for a, b in prerequisites:
+            g[b].append(a)
+            indeg[a] += 1
+        q = [i for i, x in enumerate(indeg) if x == 0]
+        for i in q:
+            numCourses -= 1
+            for j in g[i]:
+                indeg[j] -= 1
+                if indeg[j] == 0:
                     q.append(j)
-        return cnt == numCourses
+        return numCourses == 0

@@ -1,41 +1,54 @@
-var p []int
+type unionFind struct {
+	p, size []int
+}
+
+func newUnionFind(n int) *unionFind {
+	p := make([]int, n)
+	size := make([]int, n)
+	for i := range p {
+		p[i] = i
+		size[i] = 1
+	}
+	return &unionFind{p, size}
+}
+
+func (uf *unionFind) find(x int) int {
+	if uf.p[x] != x {
+		uf.p[x] = uf.find(uf.p[x])
+	}
+	return uf.p[x]
+}
+
+func (uf *unionFind) union(a, b int) bool {
+	pa, pb := uf.find(a), uf.find(b)
+	if pa == pb {
+		return false
+	}
+	if uf.size[pa] > uf.size[pb] {
+		uf.p[pb] = pa
+		uf.size[pa] += uf.size[pb]
+	} else {
+		uf.p[pa] = pb
+		uf.size[pb] += uf.size[pa]
+	}
+	return true
+}
 
 func numSimilarGroups(strs []string) int {
 	n := len(strs)
-	p = make([]int, n)
-	for i := 0; i < n; i++ {
-		p[i] = i
-	}
-	for i := 0; i < n; i++ {
-		for j := i + 1; j < n; j++ {
-			if !check(strs[i], strs[j]) {
-				continue
+	uf := newUnionFind(n)
+	for i, s := range strs {
+		for j, t := range strs[:i] {
+			diff := 0
+			for k := range s {
+				if s[k] != t[k] {
+					diff++
+				}
 			}
-			p[find(i)] = find(j)
+			if diff <= 2 && uf.union(i, j) {
+				n--
+			}
 		}
 	}
-	res := 0
-	for i := 0; i < n; i++ {
-		if i == find(i) {
-			res++
-		}
-	}
-	return res
-}
-
-func check(a, b string) bool {
-	cnt, n := 0, len(a)
-	for i := 0; i < n; i++ {
-		if a[i] != b[i] {
-			cnt++
-		}
-	}
-	return cnt <= 2
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
+	return n
 }

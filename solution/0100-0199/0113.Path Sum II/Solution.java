@@ -4,29 +4,35 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    private List<List<Integer>> res;
-    private List<Integer> path;
+    private List<List<Integer>> ans = new ArrayList<>();
+    private List<Integer> t = new ArrayList<>();
 
-    public List<List<Integer>> pathSum(TreeNode root, int sum) {
-        if (root == null) return Collections.emptyList();
-        res = new ArrayList<>();
-        path = new ArrayList<>();
-        dfs(root, sum);
-        return res;
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        dfs(root, targetSum);
+        return ans;
     }
 
-    private void dfs(TreeNode root, int sum) {
-        if (root == null) return;
-        path.add(root.val);
-        if (root.val == sum && root.left == null && root.right == null) {
-            res.add(new ArrayList<>(path));
+    private void dfs(TreeNode root, int s) {
+        if (root == null) {
+            return;
         }
-        dfs(root.left, sum - root.val);
-        dfs(root.right, sum - root.val);
-        path.remove(path.size() - 1);
+        s -= root.val;
+        t.add(root.val);
+        if (root.left == null && root.right == null && s == 0) {
+            ans.add(new ArrayList<>(t));
+        }
+        dfs(root.left, s);
+        dfs(root.right, s);
+        t.remove(t.size() - 1);
     }
 }

@@ -11,20 +11,25 @@
  * @param {number} target
  * @return {number}
  */
- var closestValue = function(root, target) {
-    let res = root.val;
-    let minDiff = Math.abs(root.val - target);
-    while (root) {
-        const val = Math.abs(root.val - target);
-        if (minDiff > val) {
-            minDiff = val;
-            res = root.val;
+var closestValue = function (root, target) {
+    let ans = 0;
+    let diff = Infinity;
+
+    const dfs = node => {
+        if (!node) {
+            return;
         }
-        if (root.val > target) {
-            root = root.left;
-        } else {
-            root = root.right;
+
+        const nxt = Math.abs(target - node.val);
+        if (nxt < diff || (nxt === diff && node.val < ans)) {
+            diff = nxt;
+            ans = node.val;
         }
-    }
-    return res;
+
+        node = target < node.val ? node.left : node.right;
+        dfs(node);
+    };
+
+    dfs(root);
+    return ans;
 };

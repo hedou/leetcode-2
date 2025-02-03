@@ -3,16 +3,17 @@
  * @param {number[]} speed
  * @return {number}
  */
- var eliminateMaximum = function(dist, speed) {
-    let arr = [];
-    for (let i = 0; i < dist.length; i++) {
-        arr[i] = dist[i] / speed[i];
+var eliminateMaximum = function (dist, speed) {
+    const n = dist.length;
+    const times = Array(n).fill(0);
+    for (let i = 0; i < n; ++i) {
+        times[i] = Math.floor((dist[i] - 1) / speed[i]);
     }
-    arr.sort((a, b) => a - b);
-    let ans = 0;
-    while (arr[0] > ans) {
-        arr.shift();
-        ++ans;
+    times.sort((a, b) => a - b);
+    for (let i = 0; i < n; ++i) {
+        if (times[i] < i) {
+            return i;
+        }
     }
-    return ans;
+    return n;
 };

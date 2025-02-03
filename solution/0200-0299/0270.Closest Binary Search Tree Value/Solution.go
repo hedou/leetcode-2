@@ -1,5 +1,3 @@
-import "math"
-
 /**
  * Definition for a binary tree node.
  * type TreeNode struct {
@@ -9,19 +7,24 @@ import "math"
  * }
  */
 func closestValue(root *TreeNode, target float64) int {
-	res := root.Val
-	minDiff := math.Abs(float64(root.Val) - float64(target))
-	for root != nil {
-		val := math.Abs(float64(root.Val) - float64(target))
-		if minDiff > val {
-			minDiff = val
-			res = root.Val
+	ans := root.Val
+	diff := math.MaxFloat64
+	var dfs func(*TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
 		}
-		if float64(root.Val) > target {
-			root = root.Left
+		nxt := math.Abs(float64(node.Val) - target)
+		if nxt < diff || (nxt == diff && node.Val < ans) {
+			diff = nxt
+			ans = node.Val
+		}
+		if target < float64(node.Val) {
+			dfs(node.Left)
 		} else {
-			root = root.Right
+			dfs(node.Right)
 		}
 	}
-	return res
+	dfs(root)
+	return ans
 }

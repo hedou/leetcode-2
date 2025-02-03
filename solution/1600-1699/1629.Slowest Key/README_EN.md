@@ -1,8 +1,23 @@
+---
+comments: true
+difficulty: Easy
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1600-1699/1629.Slowest%20Key/README_EN.md
+rating: 1315
+source: Weekly Contest 212 Q1
+tags:
+    - Array
+    - String
+---
+
+<!-- problem:start -->
+
 # [1629. Slowest Key](https://leetcode.com/problems/slowest-key)
 
 [中文文档](/solution/1600-1699/1629.Slowest%20Key/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>A newly designed keypad was tested, where a tester pressed a sequence of <code>n</code> keys, one at a time.</p>
 
@@ -15,7 +30,7 @@
 <p><em>Return the key of the keypress that had the <strong>longest duration</strong>. If there are multiple such keypresses, return the lexicographically largest key of the keypresses.</em></p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input:</strong> releaseTimes = [9,29,49,50], keysPressed = &quot;cbcd&quot;
@@ -29,7 +44,7 @@ The longest of these was the keypress for &#39;b&#39; and the second keypress fo
 &#39;c&#39; is lexicographically larger than &#39;b&#39;, so the answer is &#39;c&#39;.
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> releaseTimes = [12,23,36,46,62], keysPressed = &quot;spuda&quot;
@@ -54,27 +69,89 @@ The longest of these was the keypress for &#39;a&#39; with duration 16.</pre>
 	<li><code>keysPressed</code> contains only lowercase English letters.</li>
 </ul>
 
+<!-- description:end -->
 
 ## Solutions
 
+<!-- solution:start -->
+
+### Solution 1
+
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
-
+class Solution:
+    def slowestKey(self, releaseTimes: List[int], keysPressed: str) -> str:
+        ans = keysPressed[0]
+        mx = releaseTimes[0]
+        for i in range(1, len(keysPressed)):
+            d = releaseTimes[i] - releaseTimes[i - 1]
+            if d > mx or (d == mx and ord(keysPressed[i]) > ord(ans)):
+                mx = d
+                ans = keysPressed[i]
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
-
+class Solution {
+    public char slowestKey(int[] releaseTimes, String keysPressed) {
+        char ans = keysPressed.charAt(0);
+        int mx = releaseTimes[0];
+        for (int i = 1; i < releaseTimes.length; ++i) {
+            int d = releaseTimes[i] - releaseTimes[i - 1];
+            if (d > mx || (d == mx && keysPressed.charAt(i) > ans)) {
+                mx = d;
+                ans = keysPressed.charAt(i);
+            }
+        }
+        return ans;
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    char slowestKey(vector<int>& releaseTimes, string keysPressed) {
+        char ans = keysPressed[0];
+        int mx = releaseTimes[0];
+        for (int i = 1, n = releaseTimes.size(); i < n; ++i) {
+            int d = releaseTimes[i] - releaseTimes[i - 1];
+            if (d > mx || (d == mx && keysPressed[i] > ans)) {
+                mx = d;
+                ans = keysPressed[i];
+            }
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func slowestKey(releaseTimes []int, keysPressed string) byte {
+	ans := keysPressed[0]
+	mx := releaseTimes[0]
+	for i := 1; i < len(releaseTimes); i++ {
+		d := releaseTimes[i] - releaseTimes[i-1]
+		if d > mx || (d == mx && keysPressed[i] > ans) {
+			mx = d
+			ans = keysPressed[i]
+		}
+	}
+	return ans
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Definition for a binary tree node.
  * public class TreeNode {
  *     public int val;
@@ -13,26 +13,9 @@
  */
 public class Solution {
     public int CountNodes(TreeNode root) {
-        if (root == null)
-        {
+        if (root == null) {
             return 0;
         }
-        int leftDepth = depth(root.left);
-        int rightDepth = depth(root.right);
-        if (leftDepth > rightDepth)
-        {
-            return (1 << rightDepth) + CountNodes(root.left);
-        }
-        return (1 << leftDepth) + CountNodes(root.right);
-    }
-
-    private int depth(TreeNode root) {
-        int res = 0;
-        while (root != null)
-        {
-            ++res;
-            root = root.left;
-        }
-        return res;
+        return 1 + CountNodes(root.left) + CountNodes(root.right);
     }
 }

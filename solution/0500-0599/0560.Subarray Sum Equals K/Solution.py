@@ -1,10 +1,9 @@
 class Solution:
     def subarraySum(self, nums: List[int], k: int) -> int:
-        mp = collections.Counter()
-        mp[0] = 1
-        res = s = 0
-        for num in nums:
-            s += num
-            res += mp[s - k]
-            mp[s] += 1
-        return res
+        cnt = Counter({0: 1})
+        ans = s = 0
+        for x in nums:
+            s += x
+            ans += cnt[s - k]
+            cnt[s] += 1
+        return ans

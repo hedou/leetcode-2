@@ -6,26 +6,16 @@
  *     Right *TreeNode
  * }
  */
-var res int
-
-func diameterOfBinaryTree(root *TreeNode) int {
-	res = 0
+func diameterOfBinaryTree(root *TreeNode) (ans int) {
+	var dfs func(root *TreeNode) int
+	dfs = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+		l, r := dfs(root.Left), dfs(root.Right)
+		ans = max(ans, l+r)
+		return 1 + max(l, r)
+	}
 	dfs(root)
-	return res
-}
-
-func dfs(root *TreeNode) int {
-	if root == nil {
-		return 0
-	}
-	left, right := dfs(root.Left), dfs(root.Right)
-	res = max(res, left+right)
-	return 1 + max(left, right)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return
 }

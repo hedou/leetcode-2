@@ -1,32 +1,36 @@
 class Solution {
-    private int[] p;
+    private List<Integer>[] g;
+    private int[] color;
 
     public boolean possibleBipartition(int n, int[][] dislikes) {
-        p = new int[n];
-        for (int i = 0; i < n; ++i) {
-            p[i] = i;
+        g = new List[n];
+        color = new int[n];
+        Arrays.setAll(g, k -> new ArrayList<>());
+        for (var e : dislikes) {
+            int a = e[0] - 1, b = e[1] - 1;
+            g[a].add(b);
+            g[b].add(a);
         }
-        Map<Integer, List<Integer>> mp = new HashMap<>();
-        for (int[] e : dislikes) {
-            mp.computeIfAbsent(e[0] - 1, k -> new ArrayList<>()).add(e[1] - 1);
-            mp.computeIfAbsent(e[1] - 1, k -> new ArrayList<>()).add(e[0] - 1);
-        }
         for (int i = 0; i < n; ++i) {
-            List<Integer> dis = mp.getOrDefault(i, new ArrayList<>());
-            for (int j : dis) {
-                if (find(i) == find(j)) {
+            if (color[i] == 0) {
+                if (!dfs(i, 1)) {
                     return false;
                 }
-                p[find(j)] = find(dis.get(0));
             }
         }
         return true;
     }
 
-    private int find(int x) {
-        if (p[x] != x) {
-            p[x] = find(p[x]);
+    private boolean dfs(int i, int c) {
+        color[i] = c;
+        for (int j : g[i]) {
+            if (color[j] == c) {
+                return false;
+            }
+            if (color[j] == 0 && !dfs(j, 3 - c)) {
+                return false;
+            }
         }
-        return p[x];
+        return true;
     }
 }

@@ -1,41 +1,34 @@
-var p []int
-
-func numEnclaves(grid [][]int) int {
+func numEnclaves(grid [][]int) (ans int) {
 	m, n := len(grid), len(grid[0])
-	p = make([]int, m*n+1)
-	for i := 0; i < len(p); i++ {
-		p[i] = i
+	dirs := [5]int{-1, 0, 1, 0, -1}
+	var dfs func(i, j int)
+	dfs = func(i, j int) {
+		grid[i][j] = 0
+		for k := 0; k < 4; k++ {
+			x, y := i+dirs[k], j+dirs[k+1]
+			if x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1 {
+				dfs(x, y)
+			}
+		}
 	}
-	dirs := [4][2]int{{0, -1}, {0, 1}, {1, 0}, {-1, 0}}
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
+	for j := 0; j < n; j++ {
+		for _, i := range [2]int{0, m - 1} {
 			if grid[i][j] == 1 {
-				if i == 0 || i == m-1 || j == 0 || j == n-1 {
-					p[find(i*n+j)] = find(m * n)
-				} else {
-					for _, e := range dirs {
-						if grid[i+e[0]][j+e[1]] == 1 {
-							p[find(i*n+j)] = find((i+e[0])*n + j + e[1])
-						}
-					}
-				}
+				dfs(i, j)
 			}
 		}
 	}
-	res := 0
 	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if grid[i][j] == 1 && find(i*n+j) != find(m*n) {
-				res++
+		for _, j := range [2]int{0, n - 1} {
+			if grid[i][j] == 1 {
+				dfs(i, j)
 			}
 		}
 	}
-	return res
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
+	for _, row := range grid {
+		for _, x := range row {
+			ans += x
+		}
 	}
-	return p[x]
+	return
 }

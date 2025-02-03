@@ -1,24 +1,17 @@
-func findMaxLength(nums []int) int {
-	m := map[int]int{0: -1}
-	ans, sum := 0, 0
-	for i, num := range nums {
-		if num == 0 {
-			sum -= 1
+func findMaxLength(nums []int) (ans int) {
+	d := map[int]int{0: -1}
+	s := 0
+	for i, x := range nums {
+		if x == 1 {
+			s++
 		} else {
-			sum += 1
+			s--
 		}
-		if j, ok := m[sum]; ok {
+		if j, ok := d[s]; ok {
 			ans = max(ans, i-j)
 		} else {
-			m[sum] = i
+			d[s] = i
 		}
 	}
-	return ans
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
+	return
 }

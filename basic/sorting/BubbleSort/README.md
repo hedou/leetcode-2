@@ -8,7 +8,38 @@
 
 <!-- tabs:start -->
 
-### **Java**
+#### Python3
+
+```python
+def bubbleSort(arr):
+    n = len(arr)
+    # Iterate over all array elements
+    for i in range(n):
+        # Last i elements are already in place
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+
+# 改进版本
+def bubbleSort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        has_change = False
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                has_change = True
+        if not has_change:
+            break
+
+
+arr = [64, 34, 25, 12, 22, 11, 90]
+bubbleSort(arr)
+print(arr)
+```
+
+#### Java
 
 ```java
 import java.util.Arrays;
@@ -41,32 +72,38 @@ public class BubbleSort {
     }
 }
 ```
-### **JavaScript**
 
-```js
-function bubbleSort(inputArr) {
-    let len = inputArr.length;
-    let swapped = false;
-    for (let i = 1; i <= len - 1; i++) {
-        swapped = false;
-        for (let j = 0; j < len - 1; j++) {
-            if (inputArr[j] > inputArr[j + 1]) {
-                let temp = inputArr[j];
-                inputArr[j] = inputArr[j + 1];
-                inputArr[j + 1] = temp;
-                swapped = true
+#### C++
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void bubbleSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 0; i < n - 1; ++i) {
+        bool change = false;
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                change = true;
             }
         }
-        if (swapped === false) break;
+        if (!change) break;
     }
-    return (inputArr)
 }
 
-let arr = [6, 3, 2, 1, 5];
-console.log(bubbleSort(arr))
+int main() {
+    vector<int> arr = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+    bubbleSort(arr);
+    for (int v : arr) cout << v << " ";
+    cout << endl;
+}
 ```
 
-### **Go**
+#### Go
 
 ```go
 package main
@@ -93,76 +130,7 @@ func main() {
 }
 ```
 
-### **C++**
-
-```cpp
-#include <iostream>
-#include <vector>
-#include <string>
-
-using namespace std;
-
-/* 简单版本 */
-void bubblesort(vector<int> &vec)
-{
-    for (int i = 0; i < vec.size() - 1; i++)
-    {
-        for (int j = 0; j < vec.size() - i - 1; j++)
-        {
-            if (vec[j] > vec[j + 1])
-            {
-                swap(vec[j], vec[j + 1]);
-            }
-        }
-    }
-}
-
-/* 改进版本 */
-void bubblesort1(vector<int> &vec)
-{
-    for (int i = 0; i < vec.size() - 1; i++)
-    {
-        bool exchange = false;
-        for (int j = 0; j < vec.size() - i - 1; j++)
-        {
-            if (vec[j] > vec[j + 1])
-            {
-                swap(vec[j], vec[j + 1]);
-                exchange = true;
-            }
-        }
-
-        if (!exchange)
-        {
-            break;
-        }
-    }
-}
-
-void printvec(const vector<int> &vec, const string &strbegin = "", const string &strend = "")
-{
-    cout << strbegin << endl;
-    for (auto val : vec)
-    {
-        cout << val << "\t";
-    }
-
-    cout << endl;
-    cout << strend << endl;
-}
-
-int main(void)
-{
-    vector<int> vec = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    printvec(vec);
-
-    bubblesort1(vec);
-
-    printvec(vec, "after sort", "");
-}
-```
-
-### **Rust**
+#### Rust
 
 ```rust
 fn bubble_sort(nums: &mut Vec<i32>) {
@@ -185,18 +153,81 @@ fn main() {
 }
 ```
 
+#### JavaScript
+
+```js
+function bubbleSort(inputArr) {
+    for (let i = inputArr.length - 1; i > 0; i--) {
+        let hasChange = false;
+        for (let j = 0; j < i; j++) {
+            if (inputArr[j] > inputArr[j + 1]) {
+                const temp = inputArr[j];
+                inputArr[j] = inputArr[j + 1];
+                inputArr[j + 1] = temp;
+                hasChange = true;
+            }
+        }
+
+        if (!hasChange) {
+            break;
+        }
+    }
+
+    return inputArr;
+}
+
+const arr = [6, 3, 2, 1, 5];
+console.log(bubbleSort(arr));
+```
+
+#### C#
+
+```cs
+using static System.Console;
+namespace Pro;
+public class Program
+{
+    public static void Main()
+    {
+        int[] test = new int[] { 56, 876, 34, 23, 45, 501, 2, 3, 4, 6, 5, 7, 8, 9, 11, 10, 12, 23, 34 };
+        BubbleSortNums(test);
+        foreach (var item in test)
+        {
+            WriteLine(item);
+        }
+        ReadLine();
+    }
+    public static void BubbleSortNums(int[] nums)
+    {
+        int numchange = 0;
+        for (int initial = 0; initial < nums.Length - numchange; initial++)
+        {
+            WriteLine($"{initial} start ");
+            // 记录此值 用于迭代开始位置
+            bool changelog = false;
+            for (int second_sortnum = initial; second_sortnum < nums.Length - 1; second_sortnum++)
+            {
+                if (nums[second_sortnum] > nums[second_sortnum + 1])
+                {
+                    swap(ref nums[second_sortnum], ref nums[second_sortnum + 1]);
+                    if (!changelog)
+                    {
+                        // 记录转换的位置，让initial开始位置从转换位置前开始
+                        initial = ((second_sortnum - 2) > 0) ? (second_sortnum - 2) : -1;
+                        numchange += 1;
+                    }
+                    changelog = true;
+                }
+            }
+        }
+    }
+    private static void swap(ref int compare_left, ref int compare_right)
+    {
+        int temp = compare_left;
+        compare_left = compare_right;
+        compare_right = temp;
+    }
+}
+```
+
 <!-- tabs:end -->
-
-## 算法分析
-
-空间复杂度 O(1)、时间复杂度 O(n²)。
-
-分情况讨论：
-
-1. 给定的数组按照顺序已经排好：只需要进行 `n-1` 次比较，两两交换次数为 0，时间复杂度为 O(n)，这是最好的情况。
-2. 给定的数组按照逆序排列：需要进行 `n*(n-1)/2` 次比较，时间复杂度为 O(n²)，这是最坏的情况。
-3. 给定的数组杂乱无章。在这种情况下，平均时间复杂度 O(n²)。
-
-因此，时间复杂度是 O(n²)，这是一种稳定的排序算法。
-
-> 稳定是指，两个相等的数，在排序过后，相对位置保持不变。

@@ -14,34 +14,28 @@
  * }
  */
 class Solution {
-    private int cnt;
+    private int ans;
 
     public int countUnivalSubtrees(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        cnt = 0;
         dfs(root);
-        return cnt;
+        return ans;
     }
 
     private boolean dfs(TreeNode root) {
-        if (root.left == null && root.right == null) {
-            ++cnt;
+        if (root == null) {
             return true;
         }
-        boolean res = true;
-        if (root.left != null) {
-            // exec dfs(root.left) first
-            res = dfs(root.left) && res && root.val == root.left.val;
+        boolean l = dfs(root.left);
+        boolean r = dfs(root.right);
+        if (!l || !r) {
+            return false;
         }
-        if (root.right != null) {
-            // exec dfs(root.right) first
-            res = dfs(root.right) && res && root.val == root.right.val;
+        int a = root.left == null ? root.val : root.left.val;
+        int b = root.right == null ? root.val : root.right.val;
+        if (a == b && b == root.val) {
+            ++ans;
+            return true;
         }
-        if (res) {
-            ++cnt;
-        }
-        return res;
+        return false;
     }
 }

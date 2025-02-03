@@ -2,28 +2,27 @@ class Solution {
 public:
     int maxAreaOfIsland(vector<vector<int>>& grid) {
         int m = grid.size(), n = grid[0].size();
-        int res = 0;
+        int dirs[5] = {-1, 0, 1, 0, -1};
+        int ans = 0;
+        function<int(int, int)> dfs = [&](int i, int j) {
+            if (grid[i][j] == 0) {
+                return 0;
+            }
+            int ans = 1;
+            grid[i][j] = 0;
+            for (int k = 0; k < 4; ++k) {
+                int x = i + dirs[k], y = j + dirs[k + 1];
+                if (x >= 0 && x < m && y >= 0 && y < n) {
+                    ans += dfs(x, y);
+                }
+            }
+            return ans;
+        };
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                int t = dfs(grid, i, j, m, n);
-                res = max(res, t);
+                ans = max(ans, dfs(i, j));
             }
         }
-        return res;
+        return ans;
     }
-private:
-    vector<vector<int>> directions = {{0, 1}, {0, - 1}, {1, 0}, {-1, 0}};
-
-    int dfs(vector<vector<int>>& grid, int i, int j, int m, int n) {
-        if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) {
-            return 0;
-        }
-        grid[i][j] = 0;
-        int res = 1;
-        for (auto direction : directions) {
-            res += dfs(grid, i + direction[0], j + direction[1], m, n);
-        }
-        return res;
-    }
-
 };

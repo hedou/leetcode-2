@@ -1,10 +1,10 @@
 class Solution:
     def maxDepth(self, s: str) -> int:
-        res = depth = 0
+        ans = d = 0
         for c in s:
             if c == '(':
-                depth += 1
-                res = max(res, depth)
+                d += 1
+                ans = max(ans, d)
             elif c == ')':
-                depth -= 1
-        return res
+                d -= 1
+        return ans

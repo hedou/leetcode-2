@@ -1,24 +1,22 @@
 class Solution {
 public:
     bool verifyPostorder(vector<int>& postorder) {
-        return verify(postorder, 0, postorder.size() - 1);
-    }
-
-    bool verify(vector<int>& postorder, int left, int right) {
-        if (left >= right) {
-            return true;
-        }
-        int root = postorder[right], i = left;
-        while (postorder[i] < root) {
-            ++i;
-        }
-        int mid = i;
-        while (i < right) {
-            if (postorder[i] < root) {
-                return false;
+        function<bool(int, int)> dfs = [&](int l, int r) -> bool {
+            if (l >= r) {
+                return true;
             }
-            ++i;
-        }
-        return verify(postorder, left, mid - 1) && verify(postorder, mid, right - 1);
+            int v = postorder[r];
+            int i = l;
+            while (i < r && postorder[i] < v) {
+                ++i;
+            }
+            for (int j = i; j < r; ++j) {
+                if (postorder[j] < v) {
+                    return false;
+                }
+            }
+            return dfs(l, i - 1) && dfs(i, r - 1);
+        };
+        return dfs(0, postorder.size() - 1);
     }
 };

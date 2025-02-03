@@ -1,10 +1,26 @@
-# [2034. 股票价格波动](https://leetcode-cn.com/problems/stock-price-fluctuation)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2034.Stock%20Price%20Fluctuation/README.md
+rating: 1831
+source: 第 262 场周赛 Q3
+tags:
+    - 设计
+    - 哈希表
+    - 数据流
+    - 有序集合
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [2034. 股票价格波动](https://leetcode.cn/problems/stock-price-fluctuation)
 
 [English Version](/solution/2000-2099/2034.Stock%20Price%20Fluctuation/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一支股票价格的数据流。数据流中每一条记录包含一个 <strong>时间戳</strong>&nbsp;和该时间点股票对应的 <strong>价格</strong>&nbsp;。</p>
 
@@ -62,51 +78,55 @@ stockPrice.minimum();     // 返回 2 ，最低价格时间戳为 4 ，价格为
 	<li><code>current</code>，<code>maximum</code>&nbsp;和&nbsp;<code>minimum</code>&nbsp;被调用时，<code>update</code>&nbsp;操作 <strong>至少</strong>&nbsp;已经被调用过 <strong>一次</strong>&nbsp;。</li>
 </ul>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：哈希表 + 有序集合
+
+我们定义以下几个数据结构或变量，其中：
+
+-   `d`：表示一个哈希表，用于存储时间戳和对应的价格；
+-   `ls`：表示一个有序集合，用于存储所有的价格；
+-   `last`：表示最后一次更新的时间戳。
+
+那么，我们可以得到以下几个操作：
+
+-   `update(timestamp, price)`：更新时间戳 `timestamp` 对应的价格为 `price`。如果 `timestamp` 已经存在，那么我们需要先将其对应的价格从有序集合中删除，再将其更新为 `price`。否则，我们直接将其更新为 `price`。然后，我们需要更新 `last` 为 `max(last, timestamp)`。时间复杂度为 $O(\log n)$。
+-   `current()`：返回 `last` 对应的价格。时间复杂度为 $O(1)$。
+-   `maximum()`：返回有序集合中的最大值。时间复杂度为 $O(\log n)$。
+-   `minimum()`：返回有序集合中的最小值。时间复杂度为 $O(\log n)$。
+
+空间复杂度为 $O(n)$。其中，$n$ 为 `update` 操作的次数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class StockPrice:
-
     def __init__(self):
-        self.last_ts = 0
-        self.mp = {}
-        self.mi = []
-        self.mx = []
-        self.counter = collections.Counter()
+        self.d = {}
+        self.ls = SortedList()
+        self.last = 0
 
     def update(self, timestamp: int, price: int) -> None:
-        if timestamp in self.mp:
-            old_price = self.mp[timestamp]
-            self.counter[old_price] -= 1
-            
-        self.mp[timestamp] = price
-        self.last_ts = max(self.last_ts, timestamp)
-        self.counter[price] += 1
-        heapq.heappush(self.mi, price)
-        heapq.heappush(self.mx, -price)
-        
+        if timestamp in self.d:
+            self.ls.remove(self.d[timestamp])
+        self.d[timestamp] = price
+        self.ls.add(price)
+        self.last = max(self.last, timestamp)
 
     def current(self) -> int:
-        return self.mp[self.last_ts]
+        return self.d[self.last]
 
     def maximum(self) -> int:
-        while self.counter[-self.mx[0]] == 0:
-            heapq.heappop(self.mx)
-        return -self.mx[0]
+        return self.ls[-1]
 
     def minimum(self) -> int:
-        while self.counter[self.mi[0]] == 0:
-            heapq.heappop(self.mi)
-        return self.mi[0]
+        return self.ls[0]
 
 
 # Your StockPrice object will be instantiated and called as such:
@@ -117,50 +137,39 @@ class StockPrice:
 # param_4 = obj.minimum()
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class StockPrice {
-    private int lastTs;
-    private PriorityQueue<Integer> mi = new PriorityQueue<>();
-    private PriorityQueue<Integer> mx = new PriorityQueue<>(Collections.reverseOrder());
-    private Map<Integer, Integer> mp = new HashMap<>();
-    private Map<Integer, Integer> counter = new HashMap<>();
+    private Map<Integer, Integer> d = new HashMap<>();
+    private TreeMap<Integer, Integer> ls = new TreeMap<>();
+    private int last;
 
     public StockPrice() {
+    }
 
-    }
-    
     public void update(int timestamp, int price) {
-        if (mp.containsKey(timestamp)) {
-            int oldPrice = mp.get(timestamp);
-            counter.put(oldPrice, counter.get(oldPrice) - 1);
+        if (d.containsKey(timestamp)) {
+            int old = d.get(timestamp);
+            if (ls.merge(old, -1, Integer::sum) == 0) {
+                ls.remove(old);
+            }
         }
-        mp.put(timestamp, price);
-        lastTs = Math.max(lastTs, timestamp);
-        counter.put(price, counter.getOrDefault(price, 0) + 1);
-        mi.offer(price);
-        mx.offer(price);
+        d.put(timestamp, price);
+        ls.merge(price, 1, Integer::sum);
+        last = Math.max(last, timestamp);
     }
-    
+
     public int current() {
-        return mp.get(lastTs);
+        return d.get(last);
     }
-    
+
     public int maximum() {
-        while (counter.getOrDefault(mx.peek(), 0) == 0) {
-            mx.poll();
-        }
-        return mx.peek();
+        return ls.lastKey();
     }
-    
+
     public int minimum() {
-        while (counter.getOrDefault(mi.peek(), 0) == 0) {
-            mi.poll();
-        }
-        return mi.peek();
+        return ls.firstKey();
     }
 }
 
@@ -174,47 +183,39 @@ class StockPrice {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class StockPrice {
-private:
-    int lastTs;
-    priority_queue<int> mx;
-    priority_queue<int, vector<int>, greater<int>> mi;
-    unordered_map<int, int> mp;
-    unordered_map<int, int> counter;
 public:
     StockPrice() {
-        
     }
-    
+
     void update(int timestamp, int price) {
-        if (mp.find(timestamp) != mp.end())
-        {
-            int oldPrice = mp[timestamp];
-            --counter[oldPrice];
+        if (d.count(timestamp)) {
+            ls.erase(ls.find(d[timestamp]));
         }
-        mp[timestamp] = price;
-        lastTs = max(lastTs, timestamp);
-        ++counter[price];
-        mi.push(price);
-        mx.push(price);
+        d[timestamp] = price;
+        ls.insert(price);
+        last = max(last, timestamp);
     }
-    
+
     int current() {
-        return mp[lastTs];
+        return d[last];
     }
-    
+
     int maximum() {
-        while (!counter[mx.top()]) mx.pop();
-        return mx.top();
+        return *ls.rbegin();
     }
-    
+
     int minimum() {
-        while (!counter[mi.top()]) mi.pop();
-        return mi.top();
+        return *ls.begin();
     }
+
+private:
+    unordered_map<int, int> d;
+    multiset<int> ls;
+    int last = 0;
 };
 
 /**
@@ -227,10 +228,68 @@ public:
  */
 ```
 
-### **...**
+#### Go
 
-```
+```go
+type StockPrice struct {
+	d    map[int]int
+	ls   *redblacktree.Tree
+	last int
+}
 
+func Constructor() StockPrice {
+	return StockPrice{
+		d:    make(map[int]int),
+		ls:   redblacktree.NewWithIntComparator(),
+		last: 0,
+	}
+}
+
+func (this *StockPrice) Update(timestamp int, price int) {
+	merge := func(rbt *redblacktree.Tree, key, value int) {
+		if v, ok := rbt.Get(key); ok {
+			nxt := v.(int) + value
+			if nxt == 0 {
+				rbt.Remove(key)
+			} else {
+				rbt.Put(key, nxt)
+			}
+		} else {
+			rbt.Put(key, value)
+		}
+	}
+	if v, ok := this.d[timestamp]; ok {
+		merge(this.ls, v, -1)
+	}
+	this.d[timestamp] = price
+	merge(this.ls, price, 1)
+	this.last = max(this.last, timestamp)
+}
+
+func (this *StockPrice) Current() int {
+	return this.d[this.last]
+}
+
+func (this *StockPrice) Maximum() int {
+	return this.ls.Right().Key.(int)
+}
+
+func (this *StockPrice) Minimum() int {
+	return this.ls.Left().Key.(int)
+}
+
+/**
+ * Your StockPrice object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Update(timestamp,price);
+ * param_2 := obj.Current();
+ * param_3 := obj.Maximum();
+ * param_4 := obj.Minimum();
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

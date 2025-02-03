@@ -1,16 +1,16 @@
 /**
- * @param {number[]} A
+ * @param {number[]} nums
  * @return {number}
  */
-var largestUniqueNumber = function (A) {
-  let counter = {};
-  for (const a of A) {
-    counter[a] = (counter[a] || 0) + 1;
-  }
-  for (let i = 1000; i >= 0; --i) {
-    if (counter[i] == 1) {
-      return i;
+var largestUniqueNumber = function (nums) {
+    const cnt = Array(1001).fill(0);
+    for (const x of nums) {
+        ++cnt[x];
     }
-  }
-  return -1;
+    for (let x = 1000; x >= 0; --x) {
+        if (cnt[x] === 1) {
+            return x;
+        }
+    }
+    return -1;
 };

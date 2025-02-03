@@ -10,15 +10,13 @@
  * }
  */
 
- function isPalindrome(head: ListNode | null): boolean {
-    if (head == null || head.next == null) return true;
-    // 快慢指针定位到中点
-    let slow: ListNode = head, fast: ListNode = head.next;
+function isPalindrome(head: ListNode | null): boolean {
+    let slow: ListNode = head,
+        fast: ListNode = head.next;
     while (fast != null && fast.next != null) {
         slow = slow.next;
         fast = fast.next.next;
     }
-    // 翻转链表
     let cur: ListNode = slow.next;
     slow.next = null;
     let prev: ListNode = null;
@@ -28,11 +26,10 @@
         prev = cur;
         cur = t;
     }
-    // 判断回文
     while (prev != null) {
         if (prev.val != head.val) return false;
         prev = prev.next;
         head = head.next;
     }
     return true;
-};
+}

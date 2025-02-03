@@ -9,17 +9,13 @@ class Node:
 
 class Solution:
     def postorder(self, root: 'Node') -> List[int]:
-        if not root:
-            return []
+        def dfs(root):
+            if root is None:
+                return
+            for child in root.children:
+                dfs(child)
+            ans.append(root.val)
 
-        def PO(root):
-            if root == None:
-                return res
-            else:
-                for i in root.children:
-                    PO(i)
-                    res.append(i.val)
-        res = []
-        PO(root)
-        res.append(root.val)
-        return res
+        ans = []
+        dfs(root)
+        return ans

@@ -1,70 +1,96 @@
-# [257. 二叉树的所有路径](https://leetcode-cn.com/problems/binary-tree-paths)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0257.Binary%20Tree%20Paths/README.md
+tags:
+    - 树
+    - 深度优先搜索
+    - 字符串
+    - 回溯
+    - 二叉树
+---
+
+<!-- problem:start -->
+
+# [257. 二叉树的所有路径](https://leetcode.cn/problems/binary-tree-paths)
 
 [English Version](/solution/0200-0299/0257.Binary%20Tree%20Paths/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>给定一个二叉树，返回所有从根节点到叶子节点的路径。</p>
+<p>给你一个二叉树的根节点 <code>root</code> ，按 <strong>任意顺序</strong> ，返回所有从根节点到叶子节点的路径。</p>
 
-<p><strong>说明:</strong>&nbsp;叶子节点是指没有子节点的节点。</p>
+<p><strong>叶子节点</strong> 是指没有子节点的节点。</p>
+&nbsp;
 
-<p><strong>示例:</strong></p>
+<p><strong>示例 1：</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0257.Binary%20Tree%20Paths/images/paths-tree.jpg" style="width: 207px; height: 293px;" />
+<pre>
+<strong>输入：</strong>root = [1,2,3,null,5]
+<strong>输出：</strong>["1-&gt;2-&gt;5","1-&gt;3"]
+</pre>
 
-<pre><strong>输入:</strong>
+<p><strong>示例 2：</strong></p>
 
-   1
- /   \
-2     3
- \
-  5
+<pre>
+<strong>输入：</strong>root = [1]
+<strong>输出：</strong>["1"]
+</pre>
 
-<strong>输出:</strong> [&quot;1-&gt;2-&gt;5&quot;, &quot;1-&gt;3&quot;]
+<p>&nbsp;</p>
 
-<strong>解释:</strong> 所有根节点到叶子节点的路径为: 1-&gt;2-&gt;5, 1-&gt;3</pre>
+<p><strong>提示：</strong></p>
 
+<ul>
+	<li>树中节点的数目在范围 <code>[1, 100]</code> 内</li>
+	<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-深度优先搜索+路径记录。
+### 方法一：DFS
+
+我们可以使用深度优先搜索的方法遍历整棵二叉树，每一次我们将当前的节点添加到路径中。如果当前的节点是叶子节点，则我们将整个路径加入到答案中。否则我们继续递归遍历节点的孩子节点。最后当我们递归结束返回到当前节点时，我们需要将当前节点从路径中删除。
+
+时间复杂度 $O(n^2)$，空间复杂度 $O(n)$。其中 $n$ 是二叉树的节点数。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 # Definition for a binary tree node.
 # class TreeNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.left = None
-#         self.right = None
-
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
 class Solution:
-    def binaryTreePaths(self, root: TreeNode) -> List[str]:
-        def dfs(root):
+    def binaryTreePaths(self, root: Optional[TreeNode]) -> List[str]:
+        def dfs(root: Optional[TreeNode]):
             if root is None:
                 return
-            path.append(str(root.val))
+            t.append(str(root.val))
             if root.left is None and root.right is None:
-                res.append("->".join(path))
-            dfs(root.left)
-            dfs(root.right)
-            path.pop()
-        res = []
-        path = []
+                ans.append("->".join(t))
+            else:
+                dfs(root.left)
+                dfs(root.right)
+            t.pop()
+
+        ans = []
+        t = []
         dfs(root)
-        return res
+        return ans
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 /**
@@ -73,35 +99,122 @@ class Solution:
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    private List<String> res;
-    private List<String> path;
+    private List<String> ans = new ArrayList<>();
+    private List<String> t = new ArrayList<>();
 
     public List<String> binaryTreePaths(TreeNode root) {
-        if (root == null) return Collections.emptyList();
-        res = new ArrayList<>();
-        path = new ArrayList<>();
         dfs(root);
-        return res;
+        return ans;
     }
 
     private void dfs(TreeNode root) {
-        if (root == null) return;
-        path.add(String.valueOf(root.val));
-        if (root.left == null && root.right == null) {
-            res.add(String.join("->", path));
+        if (root == null) {
+            return;
         }
-        dfs(root.left);
-        dfs(root.right);
-        path.remove(path.size() - 1);
+        t.add(root.val + "");
+        if (root.left == null && root.right == null) {
+            ans.add(String.join("->", t));
+        } else {
+            dfs(root.left);
+            dfs(root.right);
+        }
+        t.remove(t.size() - 1);
     }
 }
 ```
 
-### **TypeScript**
+#### C++
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> ans;
+        vector<string> t;
+        function<void(TreeNode*)> dfs = [&](TreeNode* root) {
+            if (!root) {
+                return;
+            }
+            t.push_back(to_string(root->val));
+            if (!root->left && !root->right) {
+                ans.push_back(join(t));
+            } else {
+                dfs(root->left);
+                dfs(root->right);
+            }
+            t.pop_back();
+        };
+        dfs(root);
+        return ans;
+    }
+
+    string join(vector<string>& t, string sep = "->") {
+        string ans;
+        for (int i = 0; i < t.size(); ++i) {
+            if (i > 0) {
+                ans += sep;
+            }
+            ans += t[i];
+        }
+        return ans;
+    }
+};
+```
+
+#### Go
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func binaryTreePaths(root *TreeNode) (ans []string) {
+	t := []string{}
+	var dfs func(*TreeNode)
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		t = append(t, strconv.Itoa(root.Val))
+		if root.Left == nil && root.Right == nil {
+			ans = append(ans, strings.Join(t, "->"))
+		} else {
+			dfs(root.Left)
+			dfs(root.Right)
+		}
+		t = t[:len(t)-1]
+	}
+	dfs(root)
+	return
+}
+```
+
+#### TypeScript
 
 ```ts
 /**
@@ -119,30 +232,28 @@ class Solution {
  */
 
 function binaryTreePaths(root: TreeNode | null): string[] {
-    let ans = [];
-    let pre = '';
-    dfs(root, pre, ans);
+    const ans: string[] = [];
+    const t: number[] = [];
+    const dfs = (root: TreeNode | null) => {
+        if (!root) {
+            return;
+        }
+        t.push(root.val);
+        if (!root.left && !root.right) {
+            ans.push(t.join('->'));
+        } else {
+            dfs(root.left);
+            dfs(root.right);
+        }
+        t.pop();
+    };
+    dfs(root);
     return ans;
-};
-
-function dfs(root: TreeNode | null, pre: string, ans: string[]): void {
-    if (root == null) return;
-    let val = String(root.val);
-    pre = pre.length > 0 ? `${pre}->${val}` : pre + val;
-    // 叶子节点
-    if (root.left == null && root.right == null) {
-        ans.push(pre);
-        return;
-    }
-    dfs(root.left, pre, ans);
-    dfs(root.right, pre, ans);
 }
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

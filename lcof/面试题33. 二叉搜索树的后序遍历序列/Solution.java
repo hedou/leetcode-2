@@ -1,19 +1,25 @@
 class Solution {
+    private int[] postorder;
+
     public boolean verifyPostorder(int[] postorder) {
-        int n;
-        if (postorder == null || (n = postorder.length) == 0) return true;
-        return verify(postorder, 0, n - 1);
+        this.postorder = postorder;
+        return dfs(0, postorder.length - 1);
     }
 
-    private boolean  verify(int[] postorder, int p1, int p2) {
-        if (p1 >= p2) return true;
-        int pos = p1;
-        while (pos < p2 && postorder[pos] < postorder[p2]) ++pos;
-        int p = pos;
-        while (pos < p2) {
-            if (postorder[pos] < postorder[p2]) return false;
-            ++pos;
+    private boolean dfs(int l, int r) {
+        if (l >= r) {
+            return true;
         }
-        return verify(postorder, p1, p - 1) && verify(postorder, p, p2 - 1);
+        int v = postorder[r];
+        int i = l;
+        while (i < r && postorder[i] < v) {
+            ++i;
+        }
+        for (int j = i; j < r; ++j) {
+            if (postorder[j] < v) {
+                return false;
+            }
+        }
+        return dfs(l, i - 1) && dfs(i, r - 1);
     }
 }

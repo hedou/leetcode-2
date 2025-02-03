@@ -5,22 +5,17 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def longestUnivaluePath(self, root: TreeNode) -> int:
-        res = 0
-
-        def dfs(root):
-            nonlocal res
+    def longestUnivaluePath(self, root: Optional[TreeNode]) -> int:
+        def dfs(root: Optional[TreeNode]) -> int:
             if root is None:
                 return 0
-            left, right = dfs(root.left), dfs(root.right)
-
-            l = r = 0
-            if root.left and root.left.val == root.val:
-                l = left + 1
-            if root.right and root.right.val == root.val:
-                r = right + 1
-            res = max(res, l + r)
+            l, r = dfs(root.left), dfs(root.right)
+            l = l + 1 if root.left and root.left.val == root.val else 0
+            r = r + 1 if root.right and root.right.val == root.val else 0
+            nonlocal ans
+            ans = max(ans, l + r)
             return max(l, r)
 
+        ans = 0
         dfs(root)
-        return res
+        return ans

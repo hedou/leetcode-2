@@ -1,8 +1,26 @@
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/2000-2099/2034.Stock%20Price%20Fluctuation/README_EN.md
+rating: 1831
+source: Weekly Contest 262 Q3
+tags:
+    - Design
+    - Hash Table
+    - Data Stream
+    - Ordered Set
+    - Heap (Priority Queue)
+---
+
+<!-- problem:start -->
+
 # [2034. Stock Price Fluctuation](https://leetcode.com/problems/stock-price-fluctuation)
 
 [中文文档](/solution/2000-2099/2034.Stock%20Price%20Fluctuation/README.md)
 
 ## Description
+
+<!-- description:start -->
 
 <p>You are given a stream of <strong>records</strong> about a particular stock. Each record contains a <strong>timestamp</strong> and the corresponding <strong>price</strong> of the stock at that timestamp.</p>
 
@@ -28,7 +46,7 @@
 </ul>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
+<p><strong class="example">Example 1:</strong></p>
 
 <pre>
 <strong>Input</strong>
@@ -59,46 +77,55 @@ stockPrice.minimum();     // return 2, the minimum price is 2 at timestamp 4.
 	<li><code>current</code>, <code>maximum</code>, and <code>minimum</code> will be called <strong>only after</strong> <code>update</code> has been called <strong>at least once</strong>.</li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1: Hash Table + Ordered Set
+
+We define the following data structures or variables:
+
+-   `d`: a hash table that stores the timestamp and the corresponding price;
+-   `ls`: an ordered set that stores all prices;
+-   `last`: the timestamp of the last update.
+
+Then, we can perform the following operations:
+
+-   `update(timestamp, price)`: update the price corresponding to the timestamp `timestamp` to `price`. If `timestamp` already exists, we need to first remove its corresponding price from the ordered set, and then update it to `price`. Otherwise, we directly update it to `price`. Then, we need to update `last` to `max(last, timestamp)`. The time complexity is O(log n).
+-   `current()`: return the price corresponding to `last`. The time complexity is $O(1)$.
+-   `maximum()`: return the maximum value in the ordered set. The time complexity is $O(\log n)$.
+-   `minimum()`: return the minimum value in the ordered set. The time complexity is $O(\log n)$.
+
+The space complexity is $O(n)$, where $n$ is the number of `update` operations.
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 class StockPrice:
-
     def __init__(self):
-        self.last_ts = 0
-        self.mp = {}
-        self.mi = []
-        self.mx = []
-        self.counter = collections.Counter()
+        self.d = {}
+        self.ls = SortedList()
+        self.last = 0
 
     def update(self, timestamp: int, price: int) -> None:
-        if timestamp in self.mp:
-            old_price = self.mp[timestamp]
-            self.counter[old_price] -= 1
-            
-        self.mp[timestamp] = price
-        self.last_ts = max(self.last_ts, timestamp)
-        self.counter[price] += 1
-        heapq.heappush(self.mi, price)
-        heapq.heappush(self.mx, -price)
-        
+        if timestamp in self.d:
+            self.ls.remove(self.d[timestamp])
+        self.d[timestamp] = price
+        self.ls.add(price)
+        self.last = max(self.last, timestamp)
 
     def current(self) -> int:
-        return self.mp[self.last_ts]
+        return self.d[self.last]
 
     def maximum(self) -> int:
-        while self.counter[-self.mx[0]] == 0:
-            heapq.heappop(self.mx)
-        return -self.mx[0]
+        return self.ls[-1]
 
     def minimum(self) -> int:
-        while self.counter[self.mi[0]] == 0:
-            heapq.heappop(self.mi)
-        return self.mi[0]
+        return self.ls[0]
 
 
 # Your StockPrice object will be instantiated and called as such:
@@ -109,48 +136,39 @@ class StockPrice:
 # param_4 = obj.minimum()
 ```
 
-### **Java**
+#### Java
 
 ```java
 class StockPrice {
-    private int lastTs;
-    private PriorityQueue<Integer> mi = new PriorityQueue<>();
-    private PriorityQueue<Integer> mx = new PriorityQueue<>(Collections.reverseOrder());
-    private Map<Integer, Integer> mp = new HashMap<>();
-    private Map<Integer, Integer> counter = new HashMap<>();
+    private Map<Integer, Integer> d = new HashMap<>();
+    private TreeMap<Integer, Integer> ls = new TreeMap<>();
+    private int last;
 
     public StockPrice() {
+    }
 
-    }
-    
     public void update(int timestamp, int price) {
-        if (mp.containsKey(timestamp)) {
-            int oldPrice = mp.get(timestamp);
-            counter.put(oldPrice, counter.get(oldPrice) - 1);
+        if (d.containsKey(timestamp)) {
+            int old = d.get(timestamp);
+            if (ls.merge(old, -1, Integer::sum) == 0) {
+                ls.remove(old);
+            }
         }
-        mp.put(timestamp, price);
-        lastTs = Math.max(lastTs, timestamp);
-        counter.put(price, counter.getOrDefault(price, 0) + 1);
-        mi.offer(price);
-        mx.offer(price);
+        d.put(timestamp, price);
+        ls.merge(price, 1, Integer::sum);
+        last = Math.max(last, timestamp);
     }
-    
+
     public int current() {
-        return mp.get(lastTs);
+        return d.get(last);
     }
-    
+
     public int maximum() {
-        while (counter.getOrDefault(mx.peek(), 0) == 0) {
-            mx.poll();
-        }
-        return mx.peek();
+        return ls.lastKey();
     }
-    
+
     public int minimum() {
-        while (counter.getOrDefault(mi.peek(), 0) == 0) {
-            mi.poll();
-        }
-        return mi.peek();
+        return ls.firstKey();
     }
 }
 
@@ -164,47 +182,39 @@ class StockPrice {
  */
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class StockPrice {
-private:
-    int lastTs;
-    priority_queue<int> mx;
-    priority_queue<int, vector<int>, greater<int>> mi;
-    unordered_map<int, int> mp;
-    unordered_map<int, int> counter;
 public:
     StockPrice() {
-        
     }
-    
+
     void update(int timestamp, int price) {
-        if (mp.find(timestamp) != mp.end())
-        {
-            int oldPrice = mp[timestamp];
-            --counter[oldPrice];
+        if (d.count(timestamp)) {
+            ls.erase(ls.find(d[timestamp]));
         }
-        mp[timestamp] = price;
-        lastTs = max(lastTs, timestamp);
-        ++counter[price];
-        mi.push(price);
-        mx.push(price);
+        d[timestamp] = price;
+        ls.insert(price);
+        last = max(last, timestamp);
     }
-    
+
     int current() {
-        return mp[lastTs];
+        return d[last];
     }
-    
+
     int maximum() {
-        while (!counter[mx.top()]) mx.pop();
-        return mx.top();
+        return *ls.rbegin();
     }
-    
+
     int minimum() {
-        while (!counter[mi.top()]) mi.pop();
-        return mi.top();
+        return *ls.begin();
     }
+
+private:
+    unordered_map<int, int> d;
+    multiset<int> ls;
+    int last = 0;
 };
 
 /**
@@ -217,10 +227,68 @@ public:
  */
 ```
 
-### **...**
+#### Go
 
-```
+```go
+type StockPrice struct {
+	d    map[int]int
+	ls   *redblacktree.Tree
+	last int
+}
 
+func Constructor() StockPrice {
+	return StockPrice{
+		d:    make(map[int]int),
+		ls:   redblacktree.NewWithIntComparator(),
+		last: 0,
+	}
+}
+
+func (this *StockPrice) Update(timestamp int, price int) {
+	merge := func(rbt *redblacktree.Tree, key, value int) {
+		if v, ok := rbt.Get(key); ok {
+			nxt := v.(int) + value
+			if nxt == 0 {
+				rbt.Remove(key)
+			} else {
+				rbt.Put(key, nxt)
+			}
+		} else {
+			rbt.Put(key, value)
+		}
+	}
+	if v, ok := this.d[timestamp]; ok {
+		merge(this.ls, v, -1)
+	}
+	this.d[timestamp] = price
+	merge(this.ls, price, 1)
+	this.last = max(this.last, timestamp)
+}
+
+func (this *StockPrice) Current() int {
+	return this.d[this.last]
+}
+
+func (this *StockPrice) Maximum() int {
+	return this.ls.Right().Key.(int)
+}
+
+func (this *StockPrice) Minimum() int {
+	return this.ls.Left().Key.(int)
+}
+
+/**
+ * Your StockPrice object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Update(timestamp,price);
+ * param_2 := obj.Current();
+ * param_3 := obj.Maximum();
+ * param_4 := obj.Minimum();
+ */
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

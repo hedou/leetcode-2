@@ -1,16 +1,19 @@
 class Solution {
-    public boolean validPalindrome(String s) {
-        for (int i = 0, j = s.length() - 1; i < j; ++i, --j) {
-            if (s.charAt(i) != s.charAt(j)) {
-                return isPalindrome(s.substring(i, j)) || isPalindrome(s.substring(i + 1, j + 1));
+    private char[] s;
+
+    public boolean validPalindrome(String S) {
+        this.s = S.toCharArray();
+        for (int i = 0, j = s.length - 1; i < j; ++i, --j) {
+            if (s[i] != s[j]) {
+                return check(i + 1, j) || check(i, j - 1);
             }
         }
         return true;
     }
 
-    private boolean isPalindrome(String s) {
-        for (int i = 0, j = s.length() - 1; i < j; ++i, --j) {
-            if (s.charAt(i) != s.charAt(j)) {
+    private boolean check(int i, int j) {
+        for (; i < j; ++i, --j) {
+            if (s[i] != s[j]) {
                 return false;
             }
         }

@@ -7,4 +7,4 @@ function convertToTitle(columnNumber: number): string {
         columnNumber = Math.floor(columnNumber / 26);
     }
     return res.join('');
-};
+}

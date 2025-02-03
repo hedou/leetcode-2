@@ -5,20 +5,19 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def largestValues(self, root: TreeNode) -> List[int]:
-        if root is None:
-            return []
-        q = deque([root])
+    def largestValues(self, root: Optional[TreeNode]) -> List[int]:
         ans = []
+        if root is None:
+            return ans
+        q = deque([root])
         while q:
-            n = len(q)
-            t = float('-inf')
-            for _ in range(n):
+            x = -inf
+            for _ in range(len(q)):
                 node = q.popleft()
-                t = max(t, node.val)
+                x = max(x, node.val)
                 if node.left:
                     q.append(node.left)
                 if node.right:
                     q.append(node.right)
-            ans.append(t)
+            ans.append(x)
         return ans

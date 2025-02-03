@@ -1,10 +1,24 @@
-# [1984. 学生分数的最小差值](https://leetcode-cn.com/problems/minimum-difference-between-highest-and-lowest-of-k-scores)
+---
+comments: true
+difficulty: 简单
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1900-1999/1984.Minimum%20Difference%20Between%20Highest%20and%20Lowest%20of%20K%20Scores/README.md
+rating: 1306
+source: 第 256 场周赛 Q1
+tags:
+    - 数组
+    - 排序
+    - 滑动窗口
+---
+
+<!-- problem:start -->
+
+# [1984. 学生分数的最小差值](https://leetcode.cn/problems/minimum-difference-between-highest-and-lowest-of-k-scores)
 
 [English Version](/solution/1900-1999/1984.Minimum%20Difference%20Between%20Highest%20and%20Lowest%20of%20K%20Scores/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>给你一个 <strong>下标从 0 开始</strong> 的整数数组 <code>nums</code> ，其中 <code>nums[i]</code> 表示第 <code>i</code> 名学生的分数。另给你一个整数 <code>k</code> 。</p>
 
@@ -45,53 +59,127 @@
 	<li><code>0 &lt;= nums[i] &lt;= 10<sup>5</sup></code></li>
 </ul>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：排序 + 滑动窗口
+
+我们可以将学生的分数按照升序排序，然后使用滑动窗口的方法，每次取大小为 $k$ 的窗口，计算窗口内的最大值和最小值的差值，最后取所有窗口的差值的最小值。
+
+为什么是取连续的 $k$ 个学生的分数呢？因为如果不连续，那么最大值和最小值的的差值可能不变，或者变大，但一定不会变小。因此，我们只需要考虑排序后的连续的 $k$ 个学生的分数。
+
+时间复杂度 $O(n \times \log n)$，空间复杂度 $O(\log n)$。其中 $n$ 是学生的数量。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def minimumDifference(self, nums: List[int], k: int) -> int:
-        if k == 1:
-            return 0
         nums.sort()
-        ans = maxsize
-        for i in range(len(nums) - k + 1):
-            ans = min(ans, nums[i + k - 1] - nums[i])
-        return ans
+        return min(nums[i + k - 1] - nums[i] for i in range(len(nums) - k + 1))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
     public int minimumDifference(int[] nums, int k) {
-        if (k == 1) {
-            return 0;
-        }
         Arrays.sort(nums);
-        int min = Integer.MAX_VALUE;
-        for (int i = 0; i < nums.length - k + 1; i++) {
-            min = Math.min((nums[i + k - 1] - nums[i]), min);
+        int ans = 100000;
+        for (int i = 0; i < nums.length - k + 1; ++i) {
+            ans = Math.min(ans, nums[i + k - 1] - nums[i]);
         }
-        return min;
+        return ans;
     }
 }
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int minimumDifference(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end());
+        int ans = 1e5;
+        for (int i = 0; i < nums.size() - k + 1; ++i) {
+            ans = min(ans, nums[i + k - 1] - nums[i]);
+        }
+        return ans;
+    }
+};
 ```
 
+#### Go
+
+```go
+func minimumDifference(nums []int, k int) int {
+	sort.Ints(nums)
+	ans := 100000
+	for i := 0; i < len(nums)-k+1; i++ {
+		ans = min(ans, nums[i+k-1]-nums[i])
+	}
+	return ans
+}
+```
+
+#### TypeScript
+
+```ts
+function minimumDifference(nums: number[], k: number): number {
+    nums.sort((a, b) => a - b);
+    const n = nums.length;
+    let ans = nums[n - 1] - nums[0];
+    for (let i = 0; i + k - 1 < n; i++) {
+        ans = Math.min(nums[i + k - 1] - nums[i], ans);
+    }
+    return ans;
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn minimum_difference(mut nums: Vec<i32>, k: i32) -> i32 {
+        nums.sort();
+        let k = k as usize;
+        let mut res = i32::MAX;
+        for i in 0..=nums.len() - k {
+            res = res.min(nums[i + k - 1] - nums[i]);
+        }
+        res
+    }
+}
+```
+
+#### PHP
+
+```php
+class Solution {
+    /**
+     * @param Integer[] $nums
+     * @param Integer $k
+     * @return Integer
+     */
+    function minimumDifference($nums, $k) {
+        sort($nums);
+        $ans = 10 ** 5;
+        for ($i = 0; $i < count($nums) - $k + 1; $i++) {
+            $ans = min($ans, $nums[$i + $k - 1] - $nums[$i]);
+        }
+        return $ans;
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

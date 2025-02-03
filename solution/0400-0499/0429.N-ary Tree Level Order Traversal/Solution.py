@@ -6,19 +6,18 @@ class Node:
         self.children = children
 """
 
+
 class Solution:
     def levelOrder(self, root: 'Node') -> List[List[int]]:
+        ans = []
         if root is None:
-            return []
-        q = collections.deque([root])
-        res = []
+            return ans
+        q = deque([root])
         while q:
-            n = len(q)
             t = []
-            for _ in range(n):
-                node = q.popleft()
-                t.append(node.val)
-                if node.children:
-                    q.extend(node.children)
-            res.append(t)
-        return res
+            for _ in range(len(q)):
+                root = q.popleft()
+                t.append(root.val)
+                q.extend(root.children)
+            ans.append(t)
+        return ans

@@ -1,8 +1,15 @@
-# [剑指 Offer II 117. 相似的字符串](https://leetcode-cn.com/problems/H6lPxb)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20117.%20%E7%9B%B8%E4%BC%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 117. 相似的字符串](https://leetcode.cn/problems/H6lPxb)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>如果交换字符串&nbsp;<code>X</code> 中的两个不同位置的字母，使得它和字符串&nbsp;<code>Y</code> 相等，那么称 <code>X</code> 和 <code>Y</code> 两个字符串相似。如果这两个字符串本身是相等的，那它们也是相似的。</p>
 
@@ -43,109 +50,38 @@
 
 <p>&nbsp; &nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 839&nbsp;题相同：<a href="https://leetcode-cn.com/problems/similar-string-groups/">https://leetcode-cn.com/problems/similar-string-groups/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 839&nbsp;题相同：<a href="https://leetcode.cn/problems/similar-string-groups/">https://leetcode.cn/problems/similar-string-groups/</a></p>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
 
-并查集模板题。
-
-模板 1——朴素并查集：
-
-```python
-# 初始化，p存储每个点的父节点
-p = list(range(n))
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-```
-
-模板 2——维护 size 的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，size只有当节点是祖宗节点时才有意义，表示祖宗节点所在集合中，点的数量
-p = list(range(n))
-size = [1] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        # 路径压缩
-        p[x] = find(p[x])
-    return p[x]
-
-# 合并a和b所在的两个集合
-if find(a) != find(b):
-    size[find(b)] += size[find(a)]
-    p[find(a)] = find(b)
-```
-
-模板 3——维护到祖宗节点距离的并查集：
-
-```python
-# 初始化，p存储每个点的父节点，d[x]存储x到p[x]的距离
-p = list(range(n))
-d = [0] * n
-
-# 返回x的祖宗节点
-def find(x):
-    if p[x] != x:
-        t = find(p[x])
-        d[x] += d[p[x]]
-        p[x] = t
-    return p[x]
-
-# 合并a和b所在的两个集合
-p[find(a)] = find(b)
-d[find(a)] = distance
-```
-
-对于本题，先遍历所有字符串对，判断两字符串是否相似，若相似，则将两字符串合并到同一个集合中，从而形成并查集。最后统计集合的数量即可。
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class Solution:
     def numSimilarGroups(self, strs: List[str]) -> int:
-        n = len(strs)
-        p = list(range(n))
-
         def find(x):
             if p[x] != x:
                 p[x] = find(p[x])
             return p[x]
-        
-        def check(a, b):
-            cnt = 0
-            for i, c in enumerate(a):
-                if c != b[i]:
-                    cnt += 1
-            return cnt <= 2
-        
+
+        n, l = len(strs), len(strs[0])
+        p = list(range(n))
         for i in range(n):
             for j in range(i + 1, n):
-                if check(strs[i], strs[j]):
+                if sum(strs[i][k] != strs[j][k] for k in range(l)) <= 2:
                     p[find(i)] = find(j)
-        
         return sum(i == find(i) for i in range(n))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class Solution {
@@ -193,36 +129,33 @@ class Solution {
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 class Solution {
 public:
     vector<int> p;
+
     int numSimilarGroups(vector<string>& strs) {
         int n = strs.size();
-        for (int i = 0; i < n; ++i) p.push_back(i);
+        p.resize(n);
+        for (int i = 0; i < n; ++i) p[i] = i;
         for (int i = 0; i < n; ++i)
-        {
             for (int j = i + 1; j < n; ++j)
-            {
                 if (check(strs[i], strs[j]))
                     p[find(i)] = find(j);
-            }
-        }
-        int res = 0;
+        int ans = 0;
         for (int i = 0; i < n; ++i)
-        {
-            if (i == find(i)) ++res;
-        }
-        return res;
+            if (i == find(i))
+                ++ans;
+        return ans;
     }
 
     bool check(string a, string b) {
         int cnt = 0;
-        int n = a.size();
-        for (int i = 0; i < n; ++i)
-            if (a[i] != b[i]) ++cnt;
+        for (int i = 0; i < a.size(); ++i)
+            if (a[i] != b[i])
+                ++cnt;
         return cnt <= 2;
     }
 
@@ -233,56 +166,102 @@ public:
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
-var p []int
-
 func numSimilarGroups(strs []string) int {
 	n := len(strs)
-	p = make([]int, n)
-	for i := 0; i < n; i++ {
+	p := make([]int, n)
+	for i := range p {
 		p[i] = i
+	}
+	check := func(a, b string) bool {
+		cnt := 0
+		for i := range a {
+			if a[i] != b[i] {
+				cnt++
+			}
+		}
+		return cnt <= 2
+	}
+	var find func(x int) int
+	find = func(x int) int {
+		if p[x] != x {
+			p[x] = find(p[x])
+		}
+		return p[x]
 	}
 	for i := 0; i < n; i++ {
 		for j := i + 1; j < n; j++ {
-			if !check(strs[i], strs[j]) {
-				continue
+			if check(strs[i], strs[j]) {
+				p[find(i)] = find(j)
 			}
-			p[find(i)] = find(j)
 		}
 	}
-	res := 0
+	ans := 0
 	for i := 0; i < n; i++ {
 		if i == find(i) {
-			res++
+			ans++
 		}
 	}
-	return res
-}
-
-func check(a, b string) bool {
-	cnt, n := 0, len(a)
-	for i := 0; i < n; i++ {
-		if a[i] != b[i] {
-			cnt++
-		}
-	}
-	return cnt <= 2
-}
-
-func find(x int) int {
-	if p[x] != x {
-		p[x] = find(p[x])
-	}
-	return p[x]
+	return ans
 }
 ```
 
-### **...**
+#### Swift
 
-```
+```swift
+class Solution {
+    private var parent: [Int] = []
 
+    func numSimilarGroups(_ strs: [String]) -> Int {
+        let n = strs.count
+        parent = Array(0..<n)
+
+        for i in 0..<n {
+            for j in (i + 1)..<n {
+                if check(strs[i], strs[j]) {
+                    parent[find(i)] = find(j)
+                }
+            }
+        }
+
+        var groups = 0
+        for i in 0..<n {
+            if i == find(i) {
+                groups += 1
+            }
+        }
+        return groups
+    }
+
+    private func check(_ a: String, _ b: String) -> Bool {
+        let n = a.count
+        var count = 0
+        let arrA = Array(a), arrB = Array(b)
+
+        for i in 0..<n {
+            if arrA[i] != arrB[i] {
+                count += 1
+            }
+            if count > 2 {
+                return false
+            }
+        }
+        return count <= 2
+    }
+
+    private func find(_ x: Int) -> Int {
+        if parent[x] != x {
+            parent[x] = find(parent[x])
+        }
+        return parent[x]
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

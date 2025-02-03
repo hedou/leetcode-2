@@ -1,24 +1,19 @@
 class Solution {
     public boolean isPossibleDivide(int[] nums, int k) {
-        if (nums.length % k != 0) {
-            return false;
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int v : nums) {
+            cnt.merge(v, 1, Integer::sum);
         }
-        TreeMap<Integer, Integer> mp = new TreeMap<>();
-        for (int item : nums) {
-            mp.put(item, mp.getOrDefault(item, 0) + 1);
-        }
-
-        while (mp.size() > 0) {
-            int start = mp.firstKey();
-            for (int i = start; i < start + k; i++) {
-                if (!mp.containsKey(i)) {
-                    return false;
-                }
-                int time = mp.get(i);
-                if (time == 1) {
-                    mp.remove(i);
-                } else {
-                    mp.replace(i, time - 1);
+        Arrays.sort(nums);
+        for (int v : nums) {
+            if (cnt.containsKey(v)) {
+                for (int x = v; x < v + k; ++x) {
+                    if (!cnt.containsKey(x)) {
+                        return false;
+                    }
+                    if (cnt.merge(x, -1, Integer::sum) == 0) {
+                        cnt.remove(x);
+                    }
                 }
             }
         }

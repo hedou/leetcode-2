@@ -1,29 +1,43 @@
-# [250. Count Univalue Subtrees](https://leetcode.com/problems/count-univalue-subtrees)
+---
+comments: true
+difficulty: Medium
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/0200-0299/0250.Count%20Univalue%20Subtrees/README_EN.md
+tags:
+    - Tree
+    - Depth-First Search
+    - Binary Tree
+---
+
+<!-- problem:start -->
+
+# [250. Count Univalue Subtrees 🔒](https://leetcode.com/problems/count-univalue-subtrees)
 
 [中文文档](/solution/0200-0299/0250.Count%20Univalue%20Subtrees/README.md)
 
 ## Description
 
-<p>Given the <code>root</code> of a binary tree, return the number of <strong>uni-value</strong> subtrees.</p>
+<!-- description:start -->
+
+<p>Given the <code>root</code> of a binary tree, return <em>the number of <strong>uni-value</strong> </em><span data-keyword="subtree"><em>subtrees</em></span>.</p>
 
 <p>A <strong>uni-value subtree</strong> means all nodes of the subtree have the same value.</p>
 
 <p>&nbsp;</p>
-<p><strong>Example 1:</strong></p>
-<img alt="" src="https://cdn.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0250.Count%20Univalue%20Subtrees/images/unival_e1.jpg" style="width: 450px; height: 258px;" />
+<p><strong class="example">Example 1:</strong></p>
+<img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0200-0299/0250.Count%20Univalue%20Subtrees/images/unival_e1.jpg" style="width: 450px; height: 258px;" />
 <pre>
 <strong>Input:</strong> root = [5,1,5,5,5,null,5]
 <strong>Output:</strong> 4
 </pre>
 
-<p><strong>Example 2:</strong></p>
+<p><strong class="example">Example 2:</strong></p>
 
 <pre>
 <strong>Input:</strong> root = []
 <strong>Output:</strong> 0
 </pre>
 
-<p><strong>Example 3:</strong></p>
+<p><strong class="example">Example 3:</strong></p>
 
 <pre>
 <strong>Input:</strong> root = [5,5,5,5,5,null,5]
@@ -34,15 +48,21 @@
 <p><strong>Constraints:</strong></p>
 
 <ul>
-	<li>The numbrt of the node in the tree will be in the range <code>[0, 1000]</code>.</li>
+	<li>The number of the node in the tree will be in the range <code>[0, 1000]</code>.</li>
 	<li><code>-1000 &lt;= Node.val &lt;= 1000</code></li>
 </ul>
 
+<!-- description:end -->
+
 ## Solutions
+
+<!-- solution:start -->
+
+### Solution 1
 
 <!-- tabs:start -->
 
-### **Python3**
+#### Python3
 
 ```python
 # Definition for a binary tree node.
@@ -52,31 +72,27 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def countUnivalSubtrees(self, root: TreeNode) -> int:
-        if root is None:
-            return 0
-        cnt = 0
-
+    def countUnivalSubtrees(self, root: Optional[TreeNode]) -> int:
         def dfs(root):
-            nonlocal cnt
-            if root.left is None and root.right is None:
-                cnt += 1
+            if root is None:
                 return True
-            res = True
-            if root.left:
-                # exec dfs(root.left) first
-                res = dfs(root.left) and res and root.val == root.left.val
-            if root.right:
-                # exec dfs(root.right) first
-                res = dfs(root.right) and res and root.val == root.right.val
-            cnt += res
-            return res
+            l, r = dfs(root.left), dfs(root.right)
+            if not l or not r:
+                return False
+            a = root.val if root.left is None else root.left.val
+            b = root.val if root.right is None else root.right.val
+            if a == b == root.val:
+                nonlocal ans
+                ans += 1
+                return True
+            return False
 
+        ans = 0
         dfs(root)
-        return cnt
+        return ans
 ```
 
-### **Java**
+#### Java
 
 ```java
 /**
@@ -95,40 +111,34 @@ class Solution:
  * }
  */
 class Solution {
-    private int cnt;
+    private int ans;
 
     public int countUnivalSubtrees(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        cnt = 0;
         dfs(root);
-        return cnt;
+        return ans;
     }
 
     private boolean dfs(TreeNode root) {
-        if (root.left == null && root.right == null) {
-            ++cnt;
+        if (root == null) {
             return true;
         }
-        boolean res = true;
-        if (root.left != null) {
-            // exec dfs(root.left) first
-            res = dfs(root.left) && res && root.val == root.left.val;
+        boolean l = dfs(root.left);
+        boolean r = dfs(root.right);
+        if (!l || !r) {
+            return false;
         }
-        if (root.right != null) {
-            // exec dfs(root.right) first
-            res = dfs(root.right) && res && root.val == root.right.val;
+        int a = root.left == null ? root.val : root.left.val;
+        int b = root.right == null ? root.val : root.right.val;
+        if (a == b && b == root.val) {
+            ++ans;
+            return true;
         }
-        if (res) {
-            ++cnt;
-        }
-        return res;
+        return false;
     }
 }
 ```
 
-### **C++**
+#### C++
 
 ```cpp
 /**
@@ -144,32 +154,32 @@ class Solution {
  */
 class Solution {
 public:
-    int cnt;
-
     int countUnivalSubtrees(TreeNode* root) {
-        if (!root) return 0;
-        cnt = 0;
+        int ans = 0;
+        function<bool(TreeNode*)> dfs = [&](TreeNode* root) -> bool {
+            if (!root) {
+                return true;
+            }
+            bool l = dfs(root->left);
+            bool r = dfs(root->right);
+            if (!l || !r) {
+                return false;
+            }
+            int a = root->left ? root->left->val : root->val;
+            int b = root->right ? root->right->val : root->val;
+            if (a == b && b == root->val) {
+                ++ans;
+                return true;
+            }
+            return false;
+        };
         dfs(root);
-        return cnt;
-    }
-
-    bool dfs(TreeNode* root) {
-        if (!root->left && !root->right)
-        {
-            ++cnt;
-            return true;
-        }
-        bool res = true;
-        if (root->left) res = dfs(root->left) && res && root->val == root->left->val;
-        if (root->right) res = dfs(root->right) && res && root->val == root->right->val;
-        cnt += res;
-        return res;
-
+        return ans;
     }
 };
 ```
 
-### **Go**
+#### Go
 
 ```go
 /**
@@ -180,40 +190,114 @@ public:
  *     Right *TreeNode
  * }
  */
-var cnt int
-
-func countUnivalSubtrees(root *TreeNode) int {
-	if root == nil {
-		return 0
-	}
-	cnt = 0
-	dfs(root)
-	return cnt
-}
-
-func dfs(root *TreeNode) bool {
-	if root.Left == nil && root.Right == nil {
-		cnt++
+func countUnivalSubtrees(root *TreeNode) (ans int) {
+	var dfs func(*TreeNode) bool
+	dfs = func(root *TreeNode) bool {
+		if root == nil {
+			return true
+		}
+		l, r := dfs(root.Left), dfs(root.Right)
+		if !l || !r {
+			return false
+		}
+		if root.Left != nil && root.Left.Val != root.Val {
+			return false
+		}
+		if root.Right != nil && root.Right.Val != root.Val {
+			return false
+		}
+		ans++
 		return true
 	}
-	res := true
-	if root.Left != nil {
-		res = dfs(root.Left) && res && root.Val == root.Left.Val
-	}
-	if root.Right != nil {
-		res = dfs(root.Right) && res && root.Val == root.Right.Val
-	}
-	if res {
-		cnt++
-	}
-	return res
+	dfs(root)
+	return
 }
 ```
 
-### **...**
+#### TypeScript
 
+```ts
+/**
+ * Definition for a binary tree node.
+ * class TreeNode {
+ *     val: number
+ *     left: TreeNode | null
+ *     right: TreeNode | null
+ *     constructor(val?: number, left?: TreeNode | null, right?: TreeNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.left = (left===undefined ? null : left)
+ *         this.right = (right===undefined ? null : right)
+ *     }
+ * }
+ */
+
+function countUnivalSubtrees(root: TreeNode | null): number {
+    let ans: number = 0;
+    const dfs = (root: TreeNode | null): boolean => {
+        if (root == null) {
+            return true;
+        }
+        const l: boolean = dfs(root.left);
+        const r: boolean = dfs(root.right);
+        if (!l || !r) {
+            return false;
+        }
+        if (root.left != null && root.left.val != root.val) {
+            return false;
+        }
+        if (root.right != null && root.right.val != root.val) {
+            return false;
+        }
+        ++ans;
+        return true;
+    };
+    dfs(root);
+    return ans;
+}
 ```
 
+#### JavaScript
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var countUnivalSubtrees = function (root) {
+    let ans = 0;
+    const dfs = root => {
+        if (!root) {
+            return true;
+        }
+        const l = dfs(root.left);
+        const r = dfs(root.right);
+        if (!l || !r) {
+            return false;
+        }
+        if (root.left && root.left.val !== root.val) {
+            return false;
+        }
+        if (root.right && root.right.val !== root.val) {
+            return false;
+        }
+        ++ans;
+        return true;
+    };
+    dfs(root);
+    return ans;
+};
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

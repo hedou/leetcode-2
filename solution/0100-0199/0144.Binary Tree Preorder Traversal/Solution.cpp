@@ -11,35 +11,17 @@
  */
 class Solution {
 public:
-    vector<int> preorderTraversal(TreeNode *root) {
-        vector<int> res;
-        while (root)
-        {
-            if (root->left == nullptr)
-            {
-                res.push_back(root->val);
-                root = root->right;
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> ans;
+        function<void(TreeNode*)> dfs = [&](TreeNode* root) {
+            if (!root) {
+                return;
             }
-            else
-            {
-                TreeNode *pre = root->left;
-                while (pre->right && pre->right != root)
-                {
-                    pre = pre->right;
-                }
-                if (pre->right == nullptr)
-                {
-                    res.push_back(root->val);
-                    pre->right = root;
-                    root = root->left;
-                }
-                else
-                {
-                    pre->right = nullptr;
-                    root = root->right;
-                }
-            }
-        }
-        return res;
+            ans.push_back(root->val);
+            dfs(root->left);
+            dfs(root->right);
+        };
+        dfs(root);
+        return ans;
     }
 };

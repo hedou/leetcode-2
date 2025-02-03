@@ -1,20 +1,16 @@
 class Solution {
     public int longestWPI(int[] hours) {
-        int res = 0;
-        Map<Integer, Integer> map = new HashMap<>();
-        int s = 0;
+        int ans = 0, s = 0;
+        Map<Integer, Integer> pos = new HashMap<>();
         for (int i = 0; i < hours.length; ++i) {
             s += hours[i] > 8 ? 1 : -1;
             if (s > 0) {
-                res = i + 1;
-            } else {
-                int b = map.getOrDefault(s - 1, -1);
-                if (b != -1) {
-                    res = Math.max(res, i - b);
-                }
+                ans = i + 1;
+            } else if (pos.containsKey(s - 1)) {
+                ans = Math.max(ans, i - pos.get(s - 1));
             }
-            map.putIfAbsent(s, i);
+            pos.putIfAbsent(s, i);
         }
-        return res;
+        return ans;
     }
 }

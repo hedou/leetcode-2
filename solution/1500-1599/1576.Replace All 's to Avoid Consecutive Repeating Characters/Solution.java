@@ -1,19 +1,18 @@
 class Solution {
     public String modifyString(String s) {
-        char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '?') {
-                // 前面的字符
-                char ahead = i == 0 ? ' ' : chars[i - 1];
-                // 后面的字符
-                char behind = i == chars.length - 1 ? ' ' : chars[i + 1];
-                char temp = 'a';
-                while (temp == ahead || temp == behind) {
-                    temp++;
+        char[] cs = s.toCharArray();
+        int n = cs.length;
+        for (int i = 0; i < n; ++i) {
+            if (cs[i] == '?') {
+                for (char c = 'a'; c <= 'c'; ++c) {
+                    if ((i > 0 && cs[i - 1] == c) || (i + 1 < n && cs[i + 1] == c)) {
+                        continue;
+                    }
+                    cs[i] = c;
+                    break;
                 }
-                chars[i] = temp;
             }
         }
-        return new String(chars);
+        return String.valueOf(cs);
     }
 }

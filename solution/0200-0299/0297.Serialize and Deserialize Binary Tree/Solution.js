@@ -12,8 +12,24 @@
  * @param {TreeNode} root
  * @return {string}
  */
- var serialize = function(root) {
-    return rserialize(root, '');
+var serialize = function (root) {
+    if (root === null) {
+        return null;
+    }
+    const ans = [];
+    const q = [root];
+    let index = 0;
+    while (index < q.length) {
+        const node = q[index++];
+        if (node !== null) {
+            ans.push(node.val.toString());
+            q.push(node.left);
+            q.push(node.right);
+        } else {
+            ans.push('#');
+        }
+    }
+    return ans.join(',');
 };
 
 /**
@@ -22,35 +38,30 @@
  * @param {string} data
  * @return {TreeNode}
  */
-var deserialize = function(data) {
-    const dataArray = data.split(",");
-    return rdeserialize(dataArray);
-};
-
-const rserialize = (root, str) => {
-    if (root === null) {
-        str += "#,";
-    } else {
-        str += root.val + '' + ",";
-        str = rserialize(root.left, str);
-        str = rserialize(root.right, str);
-    }
-    return str;
-}
-
-const rdeserialize = (dataList) => {
-    if (dataList[0] === "#") {
-        dataList.shift();
+var deserialize = function (data) {
+    if (data === null) {
         return null;
     }
-
-    const root = new TreeNode(parseInt(dataList[0]));
-    dataList.shift();
-    root.left = rdeserialize(dataList);
-    root.right = rdeserialize(dataList);
-
+    const vals = data.split(',');
+    let i = 0;
+    const root = new TreeNode(parseInt(vals[i++]));
+    const q = [root];
+    let index = 0;
+    while (index < q.length) {
+        const node = q[index++];
+        if (vals[i] !== '#') {
+            node.left = new TreeNode(+vals[i]);
+            q.push(node.left);
+        }
+        i++;
+        if (vals[i] !== '#') {
+            node.right = new TreeNode(+vals[i]);
+            q.push(node.right);
+        }
+        i++;
+    }
     return root;
-}
+};
 
 /**
  * Your functions will be called as such:

@@ -1,42 +1,33 @@
 class StockPrice {
-    private int lastTs;
-    private PriorityQueue<Integer> mi = new PriorityQueue<>();
-    private PriorityQueue<Integer> mx = new PriorityQueue<>(Collections.reverseOrder());
-    private Map<Integer, Integer> mp = new HashMap<>();
-    private Map<Integer, Integer> counter = new HashMap<>();
+    private Map<Integer, Integer> d = new HashMap<>();
+    private TreeMap<Integer, Integer> ls = new TreeMap<>();
+    private int last;
 
     public StockPrice() {
+    }
 
-    }
-    
     public void update(int timestamp, int price) {
-        if (mp.containsKey(timestamp)) {
-            int oldPrice = mp.get(timestamp);
-            counter.put(oldPrice, counter.get(oldPrice) - 1);
+        if (d.containsKey(timestamp)) {
+            int old = d.get(timestamp);
+            if (ls.merge(old, -1, Integer::sum) == 0) {
+                ls.remove(old);
+            }
         }
-        mp.put(timestamp, price);
-        lastTs = Math.max(lastTs, timestamp);
-        counter.put(price, counter.getOrDefault(price, 0) + 1);
-        mi.offer(price);
-        mx.offer(price);
+        d.put(timestamp, price);
+        ls.merge(price, 1, Integer::sum);
+        last = Math.max(last, timestamp);
     }
-    
+
     public int current() {
-        return mp.get(lastTs);
+        return d.get(last);
     }
-    
+
     public int maximum() {
-        while (counter.getOrDefault(mx.peek(), 0) == 0) {
-            mx.poll();
-        }
-        return mx.peek();
+        return ls.lastKey();
     }
-    
+
     public int minimum() {
-        while (counter.getOrDefault(mi.peek(), 0) == 0) {
-            mi.poll();
-        }
-        return mi.peek();
+        return ls.firstKey();
     }
 }
 

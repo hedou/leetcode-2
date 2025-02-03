@@ -1,14 +1,12 @@
-func maxDepth(s string) int {
-	res, depth := 0, 0
+func maxDepth(s string) (ans int) {
+	d := 0
 	for _, c := range s {
 		if c == '(' {
-			depth++
-			if depth > res {
-				res = depth
-			}
+			d++
+			ans = max(ans, d)
 		} else if c == ')' {
-			depth--
+			d--
 		}
 	}
-	return res
+	return
 }

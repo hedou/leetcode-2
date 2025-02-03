@@ -2,17 +2,16 @@
  * @param {string} S
  * @return {string}
  */
- var compressString = function(S) {
-    if (!S) return S;
-    let p = 0, q = 1;
-    let res = '';
-    while (q < S.length) {
-        if (S[p] != S[q]) {
-            res += (S[p] + (q - p));
-            p = q;
+var compressString = function (S) {
+    const n = S.length;
+    const t = [];
+    for (let i = 0; i < n; ) {
+        let j = i + 1;
+        while (j < n && S.charAt(j) === S.charAt(i)) {
+            ++j;
         }
-        ++q;
+        t.push(S.charAt(i), j - i);
+        i = j;
     }
-    res += (S[p] + (q - p));
-    return res.length < S.length ? res : S;
+    return t.length < n ? t.join('') : S;
 };

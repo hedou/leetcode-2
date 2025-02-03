@@ -1,23 +1,16 @@
-﻿class Solution {
+class Solution {
 public:
     int firstUniqChar(string s) {
-        vector<int> cnts(26, 0), pos(26, s.size()) ;
-        
-        
-        for (int i = s.size()-1; i >= 0; --i)
-        {
-            int index = s[i] - 'a' ;
-            cnts[index]++ ;
-            pos[index] = i ;
+        int cnt[26]{};
+        for (char& c : s) {
+            ++cnt[c - 'a'];
         }
-        
-        int p = s.size() ;
-        for (int i = 0; i < 26; ++i)
-        {
-            if (cnts[i] == 1 && pos[i] < p)
-                p = pos[i] ;
+        int n = s.size();
+        for (int i = 0; i < n; ++i) {
+            if (cnt[s[i] - 'a'] == 1) {
+                return i;
+            }
         }
-        
-        return p != s.size()? p: -1 ;
+        return -1;
     }
 };

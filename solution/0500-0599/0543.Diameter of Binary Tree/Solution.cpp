@@ -11,18 +11,18 @@
  */
 class Solution {
 public:
-    int res;
-
     int diameterOfBinaryTree(TreeNode* root) {
-        res = 0;
+        int ans = 0;
+        auto dfs = [&](this auto&& dfs, TreeNode* root) -> int {
+            if (!root) {
+                return 0;
+            }
+            int l = dfs(root->left);
+            int r = dfs(root->right);
+            ans = max(ans, l + r);
+            return 1 + max(l, r);
+        };
         dfs(root);
-        return res;
-    }
-
-    int dfs(TreeNode* root) {
-        if (!root) return 0;
-        int left = dfs(root->left), right = dfs(root->right);
-        res = max(res, left + right);
-        return 1 + max(left, right);
+        return ans;
     }
 };

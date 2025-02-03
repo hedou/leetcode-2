@@ -1,16 +1,15 @@
 class Solution {
-    public int numSubarraysWithSum(int[] A, int S) {
-        int[] map = new int[A.length + 1];
-        map[0] = 1;
-        int res = 0;
-        int s = 0;
-        for (int a : A) {
-            s += a;
-            if (s >= S) {
-                res += map[s - S];
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        int[] cnt = new int[nums.length + 1];
+        cnt[0] = 1;
+        int ans = 0, s = 0;
+        for (int v : nums) {
+            s += v;
+            if (s - goal >= 0) {
+                ans += cnt[s - goal];
             }
-            ++map[s];
+            ++cnt[s];
         }
-        return res;
+        return ans;
     }
 }

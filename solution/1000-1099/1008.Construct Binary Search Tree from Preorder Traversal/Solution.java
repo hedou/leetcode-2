@@ -4,39 +4,39 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
+    private int[] preorder;
+
     public TreeNode bstFromPreorder(int[] preorder) {
-        if (preorder == null || preorder.length == 0) {
-            return null;
-        }
-        // 进入分治法的递归
-        return helper(preorder, 0, preorder.length - 1);
+        this.preorder = preorder;
+        return dfs(0, preorder.length - 1);
     }
-    
-    private TreeNode helper(int[] preorder, int start, int end) {
-        // System.out.println("start: " + start + " end: " + end);
-        // 确认递归结束的标志，当 start == end 时，表示该区间只剩下一个 subRoot 节点
-        if (start > end) {
+
+    private TreeNode dfs(int i, int j) {
+        if (i > j) {
             return null;
         }
-        if (start == end) {
-            return new TreeNode(preorder[start]);
-        }
-        // 前序遍历，首先遍历到的为根
-        TreeNode root = new TreeNode(preorder[start]);
-        int leftEnd = start;
-        while (leftEnd <= end) {
-            if (preorder[leftEnd] > preorder[start]) {
-                break;
+        TreeNode root = new TreeNode(preorder[i]);
+        int l = i + 1, r = j + 1;
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            if (preorder[mid] > preorder[i]) {
+                r = mid;
+            } else {
+                l = mid + 1;
             }
-            leftEnd++;
         }
-        // System.out.println("leftEnd:" + leftEnd + " num: " + preorder[leftEnd]);
-        root.left = helper(preorder, start + 1, leftEnd - 1);
-        root.right = helper(preorder, leftEnd, end);
+        root.left = dfs(i + 1, l - 1);
+        root.right = dfs(l, j);
         return root;
     }
 }

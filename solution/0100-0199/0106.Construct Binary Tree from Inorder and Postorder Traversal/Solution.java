@@ -4,27 +4,36 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    private Map<Integer, Integer> indexes = new HashMap<>();
-    
+    private Map<Integer, Integer> d = new HashMap<>();
+    private int[] postorder;
+
     public TreeNode buildTree(int[] inorder, int[] postorder) {
+        this.postorder = postorder;
         int n = inorder.length;
         for (int i = 0; i < n; ++i) {
-            indexes.put(inorder[i], i);
+            d.put(inorder[i], i);
         }
-        return build(inorder, postorder, 0, inorder.length - 1, 0, postorder.length - 1);
+        return dfs(0, 0, n);
     }
 
-    private TreeNode build(int[] inorder, int[] postorder, int i1, int i2, int p1, int p2) {
-        if (i1 > i2 || p1 > p2) return null;
-        int rootVal = postorder[p2];
-        int pos = indexes.get(rootVal);
-        TreeNode root = new TreeNode(rootVal);
-        root.left = pos == i1 ? null : build(inorder, postorder, i1, pos - 1, p1, p1 - i1 + pos - 1);
-        root.right = pos == i2 ? null : build(inorder, postorder, pos + 1, i2, p1 - i1 + pos, p2 - 1);
-        return root;
+    private TreeNode dfs(int i, int j, int n) {
+        if (n <= 0) {
+            return null;
+        }
+        int v = postorder[j + n - 1];
+        int k = d.get(v);
+        TreeNode l = dfs(i, j, k - i);
+        TreeNode r = dfs(k + 1, j + k - i, n - k + i - 1);
+        return new TreeNode(v, l, r);
     }
 }

@@ -1,8 +1,8 @@
 class Solution:
     def minimumDifference(self, nums: List[int]) -> int:
         n = len(nums) >> 1
-        f = collections.defaultdict(set)
-        g = collections.defaultdict(set)
+        f = defaultdict(set)
+        g = defaultdict(set)
         for i in range(1 << n):
             s = cnt = 0
             s1 = cnt1 = 0
@@ -18,7 +18,7 @@ class Solution:
             f[cnt].add(s)
             g[cnt1].add(s1)
 
-        ans = float('inf')
+        ans = inf
         for i in range(n + 1):
             fi, gi = sorted(list(f[i])), sorted(list(g[n - i]))
             # min(abs(f[i] + g[n - i]))

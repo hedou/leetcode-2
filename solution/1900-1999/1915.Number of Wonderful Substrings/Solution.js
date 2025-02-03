@@ -2,20 +2,18 @@
  * @param {string} word
  * @return {number}
  */
- var wonderfulSubstrings = function(word) {
-    let n = 1 << 10;
-    let counts = new Array(n).fill(0);
-    counts[0] = 1;
-    let pre = 0;
+var wonderfulSubstrings = function (word) {
+    const cnt = new Array(1024).fill(0);
+    cnt[0] = 1;
     let ans = 0;
-    for (let c of word) {
-        let cur = c.charCodeAt(0) - 'a'.charCodeAt(0);
-        pre ^= (1 << cur);
-        ans += counts[pre];
-        for (let i = 1; i < n; i <<= 1) {
-            ans += counts[pre ^ i];
+    let st = 0;
+    for (const c of word) {
+        st ^= 1 << (c.charCodeAt() - 'a'.charCodeAt());
+        ans += cnt[st];
+        for (let i = 0; i < 10; ++i) {
+            ans += cnt[st ^ (1 << i)];
         }
-        ++counts[pre];
+        cnt[st]++;
     }
     return ans;
 };

@@ -1,24 +1,20 @@
 class Solution {
     public boolean isNStraightHand(int[] hand, int groupSize) {
-        if (hand.length % groupSize != 0) {
-            return false;
+        Map<Integer, Integer> cnt = new HashMap<>();
+        for (int v : hand) {
+            cnt.put(v, cnt.getOrDefault(v, 0) + 1);
         }
-        TreeMap<Integer, Integer> mp = new TreeMap<>();
-        for (int item : hand) {
-            mp.put(item, mp.getOrDefault(item, 0) + 1);
-        }
-
-        while (mp.size() > 0) {
-            int start = mp.firstKey();
-            for (int i = start; i < start + groupSize; i++) {
-                if (!mp.containsKey(i)) {
-                    return false;
-                }
-                int time = mp.get(i);
-                if (time == 1) {
-                    mp.remove(i);
-                } else {
-                    mp.replace(i, time - 1);
+        Arrays.sort(hand);
+        for (int v : hand) {
+            if (cnt.containsKey(v)) {
+                for (int x = v; x < v + groupSize; ++x) {
+                    if (!cnt.containsKey(x)) {
+                        return false;
+                    }
+                    cnt.put(x, cnt.get(x) - 1);
+                    if (cnt.get(x) == 0) {
+                        cnt.remove(x);
+                    }
                 }
             }
         }

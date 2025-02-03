@@ -6,22 +6,14 @@
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
-
 class Solution {
 public:
-    vector<int> ret;
-
-    void getVal(ListNode* head) {
-        if (head) {
-            if (head->next) {
-                getVal(head->next);
-            } 
-            ret.push_back(head->val);
-        }
-    }
-
     vector<int> reversePrint(ListNode* head) {
-        getVal(head);
-        return ret;
+        vector<int> ans;
+        for (; head; head = head->next) {
+            ans.push_back(head->val);
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
     }
 };

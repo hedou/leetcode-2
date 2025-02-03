@@ -2,15 +2,17 @@
  * @param {string} s
  * @return {number}
  */
- var lengthOfLongestSubstring = function(s) {
-    let res = 0;
-    let chars = new Set();
-    for (let i = 0, j = 0; i < s.length; ++i) {
-        while (chars.has(s[i])) {
-            chars.delete(s[j++]);
+var lengthOfLongestSubstring = function (s) {
+    let ans = 0;
+    const n = s.length;
+    const cnt = new Map();
+    for (let l = 0, r = 0; r < n; ++r) {
+        cnt.set(s[r], (cnt.get(s[r]) || 0) + 1);
+        while (cnt.get(s[r]) > 1) {
+            cnt.set(s[l], cnt.get(s[l]) - 1);
+            ++l;
         }
-        chars.add(s[i]);
-        res = Math.max(res, i - j + 1);
+        ans = Math.max(ans, r - l + 1);
     }
-    return res;
+    return ans;
 };

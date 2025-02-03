@@ -3,7 +3,7 @@ function decodeString(s: string): string {
     let stack = [];
     let count = 0; // repeatCount
     for (let cur of s) {
-        if ((/[0-9]/.test(cur))) {
+        if (/[0-9]/.test(cur)) {
             count = count * 10 + Number(cur);
         } else if (/[a-z]/.test(cur)) {
             ans += cur;
@@ -19,4 +19,4 @@ function decodeString(s: string): string {
         }
     }
     return ans;
-};
+}

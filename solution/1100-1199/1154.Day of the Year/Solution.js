@@ -1,16 +1,12 @@
+/**
+ * @param {string} date
+ * @return {number}
+ */
 var dayOfYear = function (date) {
-  var year = date.substr(0, 4) - 0;
-  var month = date.substr(5, 2) - 0;
-  var day = date.substr(8, 2) - 0;
-  var dayNumber = 0;
-  for (var m = 1; m < month; m++) {
-    if (m == 4 || m == 6 || m == 9 || m == 11) {
-      dayNumber += 30;
-    } else if (m == 2) {
-      dayNumber += year % 4 == 0 && year != 1900 ? 29 : 28;
-    } else {
-      dayNumber += 31;
-    }
-  }
-  return (dayNumber += day);
+    const y = +date.slice(0, 4);
+    const m = +date.slice(5, 7);
+    const d = +date.slice(8);
+    const v = y % 400 == 0 || (y % 4 == 0 && y % 100) ? 29 : 28;
+    const days = [31, v, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return days.slice(0, m - 1).reduce((a, b) => a + b, d);
 };

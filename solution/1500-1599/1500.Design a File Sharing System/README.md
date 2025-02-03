@@ -1,18 +1,32 @@
-# [1500. 设计文件分享系统](https://leetcode-cn.com/problems/design-a-file-sharing-system)
+---
+comments: true
+difficulty: 中等
+edit_url: https://github.com/doocs/leetcode/edit/main/solution/1500-1599/1500.Design%20a%20File%20Sharing%20System/README.md
+tags:
+    - 设计
+    - 哈希表
+    - 数据流
+    - 排序
+    - 堆（优先队列）
+---
+
+<!-- problem:start -->
+
+# [1500. 设计文件分享系统 🔒](https://leetcode.cn/problems/design-a-file-sharing-system)
 
 [English Version](/solution/1500-1599/1500.Design%20a%20File%20Sharing%20System/README_EN.md)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
-<p>我们需要使用一套文件分享系统来分享一个非常大的文件，该文件由&nbsp;<code>m</code> 个从&nbsp;<code>1</code>&nbsp;到&nbsp;<code>m</code>&nbsp;编号的文件块组成。</p>
+<p>我们需要使用一套文件分享系统来分享一个非常大的文件，该文件由&nbsp;<code>m</code> 个从&nbsp;<code>1</code>&nbsp;到&nbsp;<code>m</code>&nbsp;编号的 <strong>文件块</strong> 组成。</p>
 
-<p>当用户加入系统时，系统应为其注册<strong>一个独有</strong>的 ID。这个独有的 ID 应当被相应的用户使用<strong>一次</strong>，但是当用户离开系统时，其&nbsp;ID 应可以被（后续新注册的用户）<strong>再次使用</strong>。</p>
+<p>当用户加入系统时，系统应为其注册&nbsp;<strong>一个独有&nbsp;</strong>的 ID。这个独有的 ID 应当被相应的用户使用&nbsp;<strong>一次</strong>，但是当用户离开系统时，其&nbsp;ID 应可以被（后续新注册的用户）<strong>再次使用</strong>。</p>
 
 <p>用户可以请求文件中的某个指定的文件块，系统应当返回拥有这个文件块的所有用户的 ID。如果用户收到&nbsp;ID 的非空列表，就表示成功接收到请求的文件块。</p>
 
-<p><br>
+<p><br />
 实现&nbsp;<code>FileSharing</code> 类：</p>
 
 <ul>
@@ -24,21 +38,11 @@
 
 <p>&nbsp;</p>
 
-<p><strong>进阶：</strong></p>
-
-<ul>
-	<li>当系统以用户的 IP 地址而不是独有 ID 来识别用户，且用户断开连接后以相同 IP 重新连接系统时，会发生什么？</li>
-	<li>当用户频繁加入并退出系统，且该用户不请求任何文件块时，你的解决方案仍然保持高效吗？</li>
-	<li>当所有用户同时加入系统，请求所有文件并离开时，你的解决方案仍然保持高效吗？</li>
-	<li>如果系统用于分享&nbsp;<code>n</code>&nbsp;个文件，其中第 &nbsp;<code>i</code>&nbsp;个文件由&nbsp;<code>m[i]</code>&nbsp;组成，你需要如何修改？</li>
-</ul>
-
-<p>&nbsp;</p>
-
 <p><strong>示例:</strong></p>
 
-<pre><strong>输入:</strong>
-[&quot;FileSharing&quot;,&quot;join&quot;,&quot;join&quot;,&quot;join&quot;,&quot;request&quot;,&quot;request&quot;,&quot;leave&quot;,&quot;request&quot;,&quot;leave&quot;,&quot;join&quot;]
+<pre>
+<strong>输入:</strong>
+["FileSharing","join","join","join","request","request","leave","request","leave","join"]
 [[4],[[1,2]],[[2,3]],[[4]],[1,3],[2,2],[1],[2,1],[2],[[]]]
 <strong>输出:</strong>
 [null,1,2,3,[2],[1,2],null,[],null,1]
@@ -69,38 +73,50 @@ fileSharing.join([]);        // 一个不拥有任何文件块的用户加入系
 <p><strong>提示:</strong></p>
 
 <ul>
-	<li><code>1 &lt;= m &lt;= 10^5</code></li>
+	<li><code>1 &lt;= m &lt;= 10<sup>5</sup></code></li>
 	<li><code>0 &lt;=&nbsp;ownedChunks.length &lt;= min(100, m)</code></li>
 	<li><code>1 &lt;= ownedChunks[i] &lt;= m</code></li>
 	<li><code>ownedChunks</code> 的值是互不相同的。</li>
 	<li><code>1 &lt;=&nbsp;chunkID &lt;= m</code></li>
 	<li>当你<strong>正确地注册</strong>用户 ID 时，题目保证&nbsp;<code>userID</code>&nbsp;是系统中的一个已注册用户。</li>
-	<li><code>join</code>、&nbsp;<code>leave</code>&nbsp;和&nbsp;<code>request</code>&nbsp;最多被调用&nbsp;<code>10^4</code>&nbsp;次。</li>
+	<li><code>join</code>、&nbsp;<code>leave</code>&nbsp;和&nbsp;<code>request</code>&nbsp;最多被调用&nbsp;<code>10<sup>4</sup></code>&nbsp;次。</li>
 	<li>每次对&nbsp;<code>leave</code>&nbsp;的调用都有对应的对&nbsp;<code>join</code>&nbsp;的调用。</li>
 </ul>
 
+<p>&nbsp;</p>
+
+<p><strong>进阶：</strong></p>
+
+<ul>
+	<li>当系统以用户的 IP 地址而不是独有 ID 来识别用户，且用户断开连接后以相同 IP 重新连接系统时，会发生什么？</li>
+	<li>当用户频繁加入并退出系统，且该用户不请求任何文件块时，你的解决方案仍然保持高效吗？</li>
+	<li>当所有用户同时加入系统，请求所有文件并离开时，你的解决方案仍然保持高效吗？</li>
+	<li>如果系统用于分享&nbsp;<code>n</code>&nbsp;个文件，其中第 &nbsp;<code>i</code>&nbsp;个文件由&nbsp;<code>m[i]</code>&nbsp;组成，你需要如何修改？</li>
+</ul>
+
+<!-- description:end -->
+
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
 class FileSharing:
-
     def __init__(self, m: int):
         self.cur = 0
         self.chunks = m
         self.reused = []
-        self.user_chunks = collections.defaultdict(set)
+        self.user_chunks = defaultdict(set)
 
     def join(self, ownedChunks: List[int]) -> int:
         if self.reused:
-            userID = heapq.heappop(self.reused)
+            userID = heappop(self.reused)
         else:
             self.cur += 1
             userID = self.cur
@@ -108,7 +124,7 @@ class FileSharing:
         return userID
 
     def leave(self, userID: int) -> None:
-        heapq.heappush(self.reused, userID)
+        heappush(self.reused, userID)
         self.user_chunks.pop(userID)
 
     def request(self, userID: int, chunkID: int) -> List[int]:
@@ -122,6 +138,7 @@ class FileSharing:
             self.user_chunks[userID].add(chunkID)
         return sorted(res)
 
+
 # Your FileSharing object will be instantiated and called as such:
 # obj = FileSharing(m)
 # param_1 = obj.join(ownedChunks)
@@ -129,9 +146,7 @@ class FileSharing:
 # param_3 = obj.request(userID,chunkID)
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
 class FileSharing {
@@ -146,7 +161,7 @@ class FileSharing {
         reused = new TreeSet<>();
         userChunks = new TreeMap<>();
     }
-    
+
     public int join(List<Integer> ownedChunks) {
         int userID;
         if (reused.isEmpty()) {
@@ -158,12 +173,12 @@ class FileSharing {
         userChunks.put(userID, new HashSet<>(ownedChunks));
         return userID;
     }
-    
+
     public void leave(int userID) {
         reused.add(userID);
         userChunks.remove(userID);
     }
-    
+
     public List<Integer> request(int userID, int chunkID) {
         if (chunkID < 1 || chunkID > chunks) {
             return Collections.emptyList();
@@ -190,10 +205,8 @@ class FileSharing {
  */
 ```
 
-### **...**
-
-```
-
-```
-
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

@@ -1,23 +1,32 @@
+class UnionFind:
+    def __init__(self, n):
+        self.p = list(range(n))
+        self.size = [1] * n
+
+    def find(self, x):
+        if self.p[x] != x:
+            self.p[x] = self.find(self.p[x])
+        return self.p[x]
+
+    def union(self, a, b):
+        pa, pb = self.find(a), self.find(b)
+        if pa == pb:
+            return False
+        if self.size[pa] > self.size[pb]:
+            self.p[pb] = pa
+            self.size[pa] += self.size[pb]
+        else:
+            self.p[pa] = pb
+            self.size[pb] += self.size[pa]
+        return True
+
+
 class Solution:
     def numSimilarGroups(self, strs: List[str]) -> int:
-        n = len(strs)
-        p = list(range(n))
-
-        def find(x):
-            if p[x] != x:
-                p[x] = find(p[x])
-            return p[x]
-
-        def check(a, b):
-            cnt = 0
-            for i, c in enumerate(a):
-                if c != b[i]:
-                    cnt += 1
-            return cnt <= 2
-
-        for i in range(n):
-            for j in range(i + 1, n):
-                if check(strs[i], strs[j]):
-                    p[find(i)] = find(j)
-
-        return sum(i == find(i) for i in range(n))
+        n, m = len(strs), len(strs[0])
+        uf = UnionFind(n)
+        for i, s in enumerate(strs):
+            for j, t in enumerate(strs[:i]):
+                if sum(s[k] != t[k] for k in range(m)) <= 2 and uf.union(i, j):
+                    n -= 1
+        return n

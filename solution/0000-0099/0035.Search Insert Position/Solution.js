@@ -3,16 +3,15 @@
  * @param {number} target
  * @return {number}
  */
- var searchInsert = function(nums, target) {
-  let left = 0;
-  let right = nums.length;
-  while (left < right) {
-      const mid = (left + right) >> 1;
-      if (nums[mid] >= target) {
-          right = mid;
-      } else {
-          left = mid + 1;
-      }
-  }
-  return left;
+var searchInsert = function (nums, target) {
+    let [l, r] = [0, nums.length];
+    while (l < r) {
+        const mid = (l + r) >> 1;
+        if (nums[mid] >= target) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
 };

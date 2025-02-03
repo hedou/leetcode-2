@@ -11,26 +11,26 @@
  */
 class Solution {
 public:
-    int cnt;
-
     int countUnivalSubtrees(TreeNode* root) {
-        if (!root) return 0;
-        cnt = 0;
+        int ans = 0;
+        function<bool(TreeNode*)> dfs = [&](TreeNode* root) -> bool {
+            if (!root) {
+                return true;
+            }
+            bool l = dfs(root->left);
+            bool r = dfs(root->right);
+            if (!l || !r) {
+                return false;
+            }
+            int a = root->left ? root->left->val : root->val;
+            int b = root->right ? root->right->val : root->val;
+            if (a == b && b == root->val) {
+                ++ans;
+                return true;
+            }
+            return false;
+        };
         dfs(root);
-        return cnt;
-    }
-
-    bool dfs(TreeNode* root) {
-        if (!root->left && !root->right)
-        {
-            ++cnt;
-            return true;
-        }
-        bool res = true;
-        if (root->left) res = dfs(root->left) && res && root->val == root->left->val;
-        if (root->right) res = dfs(root->right) && res && root->val == root->right->val;
-        cnt += res;
-        return res;
-        
+        return ans;
     }
 };

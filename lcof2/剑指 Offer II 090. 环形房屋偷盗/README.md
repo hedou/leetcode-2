@@ -1,8 +1,15 @@
-# [剑指 Offer II 090. 环形房屋偷盗](https://leetcode-cn.com/problems/PzWKhm)
+---
+comments: true
+edit_url: https://github.com/doocs/leetcode/edit/main/lcof2/%E5%89%91%E6%8C%87%20Offer%20II%20090.%20%E7%8E%AF%E5%BD%A2%E6%88%BF%E5%B1%8B%E5%81%B7%E7%9B%97/README.md
+---
+
+<!-- problem:start -->
+
+# [剑指 Offer II 090. 环形房屋偷盗](https://leetcode.cn/problems/PzWKhm)
 
 ## 题目描述
 
-<!-- 这里写题目描述 -->
+<!-- description:start -->
 
 <p>一个专业的小偷，计划偷窃一个环形街道上沿街的房屋，每间房内都藏有一定的现金。这个地方所有的房屋都 <strong>围成一圈</strong> ，这意味着第一个房屋和最后一个房屋是紧挨着的。同时，相邻的房屋装有相互连通的防盗系统，<strong>如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警</strong> 。</p>
 
@@ -44,35 +51,173 @@
 
 <p>&nbsp;</p>
 
-<p><meta charset="UTF-8" />注意：本题与主站 213&nbsp;题相同：&nbsp;<a href="https://leetcode-cn.com/problems/house-robber-ii/">https://leetcode-cn.com/problems/house-robber-ii/</a></p>
+<p><meta charset="UTF-8" />注意：本题与主站 213&nbsp;题相同：&nbsp;<a href="https://leetcode.cn/problems/house-robber-ii/">https://leetcode.cn/problems/house-robber-ii/</a></p>
 
+<!-- description:end -->
 
 ## 解法
 
-<!-- 这里可写通用的实现逻辑 -->
+<!-- solution:start -->
+
+### 方法一：动态规划
+
+环状排列意味着第一个房屋和最后一个房屋中最多只能选择一个偷窃，因此可以把此环状排列房间问题约化为两个单排排列房屋子问题。
+
+时间复杂度 $O(n)$，其中 $n$ 是数组长度。空间复杂度 $O(1)$。
 
 <!-- tabs:start -->
 
-### **Python3**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Python3
 
 ```python
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        def _rob(nums):
+            f = g = 0
+            for x in nums:
+                f, g = max(f, g), f + x
+            return max(f, g)
 
+        if len(nums) == 1:
+            return nums[0]
+        return max(_rob(nums[1:]), _rob(nums[:-1]))
 ```
 
-### **Java**
-
-<!-- 这里可写当前语言的特殊实现逻辑 -->
+#### Java
 
 ```java
+class Solution {
+    public int rob(int[] nums) {
+        int n = nums.length;
+        if (n == 1) {
+            return nums[0];
+        }
+        return Math.max(rob(nums, 0, n - 2), rob(nums, 1, n - 1));
+    }
 
+    private int rob(int[] nums, int l, int r) {
+        int f = 0, g = 0;
+        for (; l <= r; ++l) {
+            int ff = Math.max(f, g);
+            g = f + nums[l];
+            f = ff;
+        }
+        return Math.max(f, g);
+    }
+}
 ```
 
-### **...**
+#### C++
 
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 1) {
+            return nums[0];
+        }
+        return max(robRange(nums, 0, n - 2), robRange(nums, 1, n - 1));
+    }
+
+    int robRange(vector<int>& nums, int l, int r) {
+        int f = 0, g = 0;
+        for (; l <= r; ++l) {
+            int ff = max(f, g);
+            g = f + nums[l];
+            f = ff;
+        }
+        return max(f, g);
+    }
+};
 ```
 
+#### Go
+
+```go
+func rob(nums []int) int {
+	n := len(nums)
+	if n == 1 {
+		return nums[0]
+	}
+	return max(robRange(nums, 0, n-2), robRange(nums, 1, n-1))
+}
+
+func robRange(nums []int, l, r int) int {
+	f, g := 0, 0
+	for _, x := range nums[l : r+1] {
+		f, g = max(f, g), f+x
+	}
+	return max(f, g)
+}
+```
+
+#### TypeScript
+
+```ts
+function rob(nums: number[]): number {
+    const n = nums.length;
+    if (n === 1) {
+        return nums[0];
+    }
+    const robRange = (l: number, r: number): number => {
+        let [f, g] = [0, 0];
+        for (; l <= r; ++l) {
+            [f, g] = [Math.max(f, g), f + nums[l]];
+        }
+        return Math.max(f, g);
+    };
+    return Math.max(robRange(0, n - 2), robRange(1, n - 1));
+}
+```
+
+#### Rust
+
+```rust
+impl Solution {
+    pub fn rob(nums: Vec<i32>) -> i32 {
+        let n = nums.len();
+        if n == 1 {
+            return nums[0];
+        }
+        let rob_range = |l, r| {
+            let mut f = [0, 0];
+            for i in l..r {
+                f = [f[0].max(f[1]), f[0] + nums[i]];
+            }
+            f[0].max(f[1])
+        };
+        rob_range(0, n - 1).max(rob_range(1, n))
+    }
+}
+```
+
+#### Swift
+
+```swift
+class Solution {
+    func rob(_ nums: [Int]) -> Int {
+        let n = nums.count
+        if n == 1 {
+            return nums[0]
+        }
+        return max(rob(nums, 0, n - 2), rob(nums, 1, n - 1))
+    }
+
+    private func rob(_ nums: [Int], _ l: Int, _ r: Int) -> Int {
+        var f = 0, g = 0
+        for i in l...r {
+            let temp = max(f, g)
+            g = f + nums[i]
+            f = temp
+        }
+        return max(f, g)
+    }
+}
 ```
 
 <!-- tabs:end -->
+
+<!-- solution:end -->
+
+<!-- problem:end -->

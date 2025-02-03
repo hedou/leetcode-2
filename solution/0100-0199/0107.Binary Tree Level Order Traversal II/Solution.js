@@ -11,29 +11,21 @@
  * @return {number[][]}
  */
 var levelOrderBottom = function (root) {
+    const ans = [];
     if (!root) {
-        return [];
+        return ans;
     }
-    let q = [], output = [], levelOutput = [];
-    q.push(root);
-    q.push(null);
+    const q = [root];
     while (q.length) {
-        let cur = q.shift();
-        levelOutput.push(cur.val);
-        if (cur.left) {
-            q.push(cur.left);
+        const t = [];
+        const qq = [];
+        for (const { val, left, right } of q) {
+            t.push(val);
+            left && qq.push(left);
+            right && qq.push(right);
         }
-        if (cur.right) {
-            q.push(cur.right);
-        }
-        if (!q[0]) {
-            q.shift();
-            output.unshift(levelOutput);
-            levelOutput = [];
-            if (q.length) {
-                q.push(null);
-            }
-        }
+        ans.push(t);
+        q.splice(0, q.length, ...qq);
     }
-    return output;
+    return ans.reverse();
 };

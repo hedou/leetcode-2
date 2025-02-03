@@ -13,14 +13,11 @@ class Solution {
 public:
     vector<int> largestValues(TreeNode* root) {
         if (!root) return {};
-        queue<TreeNode*> q;
+        queue<TreeNode*> q{{root}};
         vector<int> ans;
-        q.push(root);
-        while (!q.empty())
-        {
+        while (!q.empty()) {
             int t = INT_MIN;
-            for (int i = 0, n = q.size(); i < n; ++i)
-            {
+            for (int i = q.size(); i > 0; --i) {
                 auto node = q.front();
                 q.pop();
                 t = max(t, node->val);

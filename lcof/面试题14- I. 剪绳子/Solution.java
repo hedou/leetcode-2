@@ -1,12 +1,12 @@
 class Solution {
     public int cuttingRope(int n) {
-        if (n < 4) return n - 1;
-        int res = 1;
-        while (n > 4) {
-            res *= 3;
-            n -= 3;
+        int[] f = new int[n + 1];
+        f[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            for (int j = 1; j < i; ++j) {
+                f[i] = Math.max(Math.max(f[i], f[i - j] * j), (i - j) * j);
+            }
         }
-        if (n == 4) return res << 2;
-        return res * n;
+        return f[n];
     }
 }

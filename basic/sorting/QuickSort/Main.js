@@ -6,14 +6,17 @@ process.stdin.on('readable', function () {
 });
 
 let getInputArgs = line => {
-    return line.split(' ').filter(s => s !== '').map(x => parseInt(x));
-}
+    return line
+        .split(' ')
+        .filter(s => s !== '')
+        .map(x => parseInt(x));
+};
 
 function quickSort(nums, left, right) {
     if (left >= right) {
         return;
     }
-    
+
     let i = left - 1;
     let j = right + 1;
     let x = nums[(left + right) >> 1];
@@ -21,16 +24,12 @@ function quickSort(nums, left, right) {
         while (nums[++i] < x);
         while (nums[--j] > x);
         if (i < j) {
-            const t = nums[i];
-            nums[i] = nums[j];
-            nums[j] = t;
+            [nums[i], nums[j]] = [nums[j], nums[i]];
         }
     }
     quickSort(nums, left, j);
     quickSort(nums, j + 1, right);
 }
-
-
 
 process.stdin.on('end', function () {
     buf.split('\n').forEach(function (line, lineIdx) {
@@ -39,6 +38,5 @@ process.stdin.on('end', function () {
             quickSort(nums, 0, nums.length - 1);
             console.log(nums.join(' '));
         }
-
     });
 });

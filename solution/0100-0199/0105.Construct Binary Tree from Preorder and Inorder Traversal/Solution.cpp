@@ -4,27 +4,29 @@
  *     int val;
  *     TreeNode *left;
  *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
 class Solution {
 public:
     TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        int pRight = preorder.size()-1;
-        int iRight = inorder.size()-1;
-        return build(preorder,inorder,0,pRight,0,iRight);
-    }
-    
-    
-    TreeNode* build(vector<int>& preorder,vector<int>& inorder,int pLeft,int pRight,int iLeft,int iRight){
-        if(pLeft > pRight)return NULL;
-        
-        TreeNode *node = new TreeNode(preorder[pLeft]);
-        int idx = iLeft;
-        
-        while(inorder[idx] != preorder[pLeft])idx++;
-        node->left = build(preorder,inorder,pLeft+1,pLeft+idx-iLeft,iLeft,idx-1);
-        node->right = build(preorder,inorder,pLeft+idx-iLeft+1,pRight,idx+1,iRight);  
-        return node;
+        int n = preorder.size();
+        unordered_map<int, int> d;
+        for (int i = 0; i < n; ++i) {
+            d[inorder[i]] = i;
+        }
+        function<TreeNode*(int, int, int)> dfs = [&](int i, int j, int n) -> TreeNode* {
+            if (n <= 0) {
+                return nullptr;
+            }
+            int v = preorder[i];
+            int k = d[v];
+            TreeNode* l = dfs(i + 1, j, k - j);
+            TreeNode* r = dfs(i + 1 + k - j, k + 1, n - 1 - (k - j));
+            return new TreeNode(v, l, r);
+        };
+        return dfs(0, 0, n);
     }
 };
